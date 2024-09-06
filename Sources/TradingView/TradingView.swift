@@ -99,14 +99,6 @@ public struct TradingView: View {
                     .onAppear {
                         scrollViewProxy = proxy
                     }
-                    .onChange(of: data.count) { _ in
-                        if isScrollAtEnd {
-                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                        }
-                    }
-                    .onChange(of: candleWidth) { _ in
-                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                    }
                     #if !os(watchOS) && !os(tvOS)
                         .gesture(
                             MagnificationGesture()
@@ -134,6 +126,25 @@ public struct TradingView: View {
                             sensitivity: .low
                         )
                     #endif
+                    #if os(visionOS)
+                        .onChange(of: data.count) { _, _ in
+                            if isScrollAtEnd {
+                                scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                            }
+                        }
+                        .onChange(of: candleWidth) { _, _ in
+                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                        }
+                    #else
+                        .onChange(of: data.count) { _ in
+                            if isScrollAtEnd {
+                                scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                            }
+                        }
+                        .onChange(of: candleWidth) { _ in
+                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                        }
+                    #endif
                 }
             }
         }
@@ -154,11 +165,11 @@ public struct TradingView: View {
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 struct TradindView_Preview: PreviewProvider {
+    @ViewBuilder
     static var previews: some View {
         let data = CandleData.generateSampleData(count: 1000)
-        return TradingView(
+        TradingView(
             data: data,
-            scrollTrailingInset: 0,
             primaryContent: [
                 XAxis(),
                 Candles(),
@@ -166,5 +177,6 @@ struct TradindView_Preview: PreviewProvider {
                 MAIndicator(),
             ]
         )
+        .background(Color.black)
     }
 }
