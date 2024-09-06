@@ -1,0 +1,4 @@
+module TALib {
+    umbrella header "ta_libc.h"
+    export *
+}

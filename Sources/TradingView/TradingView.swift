@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftTA
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
     let data: [CandleData]
     let primaryContent: [PrimaryContent]
@@ -107,7 +107,7 @@ public struct TradingView: View {
                     .onChange(of: candleWidth) { _ in
                         scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
                     }
-                    #if !os(watchOS)
+                    #if !os(watchOS) && !os(tvOS)
                         .gesture(
                             MagnificationGesture()
                                 .onChanged { val in
@@ -124,7 +124,7 @@ public struct TradingView: View {
                                     self.lastScaleValue = 1.0
                                 }
                         )
-                    #else
+                    #elseif os(watchOS)
                         .focusable()
                         .digitalCrownRotation(
                             $candleWidth,
@@ -152,7 +152,7 @@ public struct TradingView: View {
     }
 }
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 struct TradindView_Preview: PreviewProvider {
     static var previews: some View {
         let data = CandleData.generateSampleData(count: 1000)

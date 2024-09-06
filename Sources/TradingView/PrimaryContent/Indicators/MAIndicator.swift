@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import SwiftTA
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct MAIndicator: PrimaryContent {
     public struct Period {
         public var value: Int
@@ -23,10 +23,7 @@ public struct MAIndicator: PrimaryContent {
         periods: [Period] = [
             .init(value: 7, color: .yellow),
             .init(value: 25, color: .brown),
-            .init(value: 99, color: .purple),
-            .init(value: 75, color: .orange),
-            .init(value: 50, color: .blue),
-            .init(value: 51, color: .green),
+            .init(value: 99, color: .purple)
         ],
         labelFont: Font = Font.system(size: 10),
         lineWidth: CGFloat = 1.0,
