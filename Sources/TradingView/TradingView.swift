@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftTA
 
+@available(macOS 12.0, iOS 15.0, *)
 public struct TradingView: View {
     let data: [CandleData]
     let primaryContent: [PrimaryContent]
@@ -138,20 +139,19 @@ public struct TradingView: View {
     }
 }
 
-#Preview {
-    struct PreviewContainer: View {
+@available(macOS 12.0, iOS 15.0, *)
+struct TradindView_Preview: PreviewProvider {
+    static var previews: some View {
         let data = CandleData.generateSampleData(count: 1000)
-        var body: some View {
-            TradingView(
-                data: data,
-                primaryContent: [
-                    XAxis(),
-                    Candles(),
-                    YAxis(),
-                    MAIndicator(),
-                ]
-            )
-        }
+        return TradingView(
+            data: data,
+            primaryContent: [
+                XAxis(),
+                Candles(),
+                YAxis(),
+                MAIndicator(),
+            ]
+        )
     }
-    return PreviewContainer()
 }
+

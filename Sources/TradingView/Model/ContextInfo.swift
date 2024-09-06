@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 
+@available(macOS 12.0, iOS 15.0, *)
 public struct ContextInfo {
     public var context: GraphicsContext
     public var contextSize: CGSize
