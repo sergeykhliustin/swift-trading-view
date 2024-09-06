@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get latest release tag
+        id: latesttag
+        run: |
+          CURRENT_VERSION=$(gh release list --limit 1 --json tagName | jq .[0].tagName | tr -d '"')
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Validate new version
+        run: |
+          NEW_VERSION=${GITHUB_REF#refs/tags/}
+          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "The new tag $NEW_VERSION is not a valid semantic version"
+            exit 1
+          fi
+          if [[ $(printf '%s\n' "$NEW_VERSION" "$CURRENT_VERSION" | sort -V | head -n1) != "$CURRENT_VERSION" ]]; then
+            echo "The new version $NEW_VERSION is not greater than the current version $CURRENT_VERSION"
+            exit 1
+          fi
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Create Release
+        run: |
+          set -euo pipefail
+
+          git config user.name "Release Workflow"
+          git config user.email "noreply@github.com"
+
+          gh release create "${{ github.ref }}" \
+            --title "${{ env.NEW_VERSION }}" \
+            --target "$GITHUB_SHA" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
