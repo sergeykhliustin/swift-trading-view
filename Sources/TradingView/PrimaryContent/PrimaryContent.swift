@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 public protocol PrimaryContent {
     func calculateYBounds(
         candlesInfo: CandlesInfo
@@ -13,7 +13,7 @@ public protocol PrimaryContent {
     )
 }
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 extension PrimaryContent {
     func flowLayout(
         context: GraphicsContext,

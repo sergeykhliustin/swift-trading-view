@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Demo
-//
-//  Created by Sergii Khliustin on 05.09.2024.
-//
-
 import SwiftUI
 import TradingView
 
