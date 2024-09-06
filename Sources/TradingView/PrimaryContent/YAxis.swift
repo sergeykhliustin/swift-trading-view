@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 
+@available(macOS 12.0, iOS 15.0, *)
 public struct YAxis: PrimaryContent {
     public var labelFont: Font
     public var labelColor: Color

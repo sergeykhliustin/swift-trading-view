@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "SwiftTradingView",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v12),
+        .macOS(.v10_13)
     ],
     products: [
         .library(

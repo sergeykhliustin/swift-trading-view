@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 
+@available(macOS 12.0, iOS 15.0, *)
 public struct XAxis: PrimaryContent {
     public var lineColor: Color
     public var labelFont: Font
