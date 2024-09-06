@@ -7,14 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1EDB952C8B3F4F00794677 /* DemoWatchOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1EDB942C8B3F4F00794677 /* DemoWatchOSApp.swift */; };
-		3F1EDB972C8B3F4F00794677 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1EDB962C8B3F4F00794677 /* ContentView.swift */; };
-		3F1EDB992C8B3F5000794677 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F1EDB982C8B3F5000794677 /* Assets.xcassets */; };
 		3F1EDB9F2C8B3F5000794677 /* DemoWatchOS Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3F1EDBA52C8B3F7D00794677 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1EDBA42C8B3F7D00794677 /* TradingView */; };
+		3F9CF79F2C8B633500C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
+		3F9CF7A02C8B633700C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
+		3F9CF7B32C8B646B00C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
+		3F9CF7B42C8B646D00C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
+		3F9CF7B62C8B648400C9ABA3 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9CF7B52C8B648400C9ABA3 /* TradingView */; };
+		3F9CF7CF2C8B943D00C9ABA3 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9CF7CE2C8B943D00C9ABA3 /* TradingView */; };
+		3F9CF7D02C8B963500C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
+		3F9CF7D12C8B963800C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
 		3FD7F12E2C8A35F30057062E /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3FD7F1302C8A35F30057062E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
-		3FD7F1322C8A35F40057062E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FD7F1312C8A35F40057062E /* Assets.xcassets */; };
 		3FD7F13D2C8A365E0057062E /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD7F13C2C8A365E0057062E /* TradingView */; };
 /* End PBXBuildFile section */
 
@@ -44,13 +48,11 @@
 
 /* Begin PBXFileReference section */
 		3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoWatchOS Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3F1EDB942C8B3F4F00794677 /* DemoWatchOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoWatchOSApp.swift; sourceTree = "<group>"; };
-		3F1EDB962C8B3F4F00794677 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		3F1EDB982C8B3F5000794677 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3F9CF7A52C8B640800C9ABA3 /* DemoTVOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoTVOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F9CF7BB2C8B7A3D00C9ABA3 /* DemoVisionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoVisionOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FD7F12A2C8A35F30057062E /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FD7F12D2C8A35F30057062E /* DemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoApp.swift; sourceTree = "<group>"; };
 		3FD7F12F2C8A35F30057062E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		3FD7F1312C8A35F40057062E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F1EDBA52C8B3F7D00794677 /* TradingView in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7A22C8B640800C9ABA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F9CF7B62C8B648400C9ABA3 /* TradingView in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7B82C8B7A3D00C9ABA3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F9CF7CF2C8B943D00C9ABA3 /* TradingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,21 +91,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3F1EDB932C8B3F4F00794677 /* DemoWatchOS Watch App */ = {
+		3F9CF7BD2C8B7A3D00C9ABA3 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				3F1EDB942C8B3F4F00794677 /* DemoWatchOSApp.swift */,
-				3F1EDB962C8B3F4F00794677 /* ContentView.swift */,
-				3F1EDB982C8B3F5000794677 /* Assets.xcassets */,
 			);
-			path = "DemoWatchOS Watch App";
+			path = Packages;
 			sourceTree = "<group>";
 		};
 		3FD7F1212C8A35F30057062E = {
 			isa = PBXGroup;
 			children = (
 				3FD7F12C2C8A35F30057062E /* Demo */,
-				3F1EDB932C8B3F4F00794677 /* DemoWatchOS Watch App */,
+				3F9CF7BD2C8B7A3D00C9ABA3 /* Packages */,
 				3FD7F12B2C8A35F30057062E /* Products */,
 				3FD7F13B2C8A365E0057062E /* Frameworks */,
 			);
@@ -98,6 +113,8 @@
 			children = (
 				3FD7F12A2C8A35F30057062E /* Demo.app */,
 				3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */,
+				3F9CF7A52C8B640800C9ABA3 /* DemoTVOS.app */,
+				3F9CF7BB2C8B7A3D00C9ABA3 /* DemoVisionOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -107,7 +124,6 @@
 			children = (
 				3FD7F12D2C8A35F30057062E /* DemoApp.swift */,
 				3FD7F12F2C8A35F30057062E /* ContentView.swift */,
-				3FD7F1312C8A35F40057062E /* Assets.xcassets */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -140,6 +156,46 @@
 			);
 			productName = "DemoWatchOS Watch App";
 			productReference = 3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3F9CF7A42C8B640800C9ABA3 /* DemoTVOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3F9CF7B02C8B640A00C9ABA3 /* Build configuration list for PBXNativeTarget "DemoTVOS" */;
+			buildPhases = (
+				3F9CF7A12C8B640800C9ABA3 /* Sources */,
+				3F9CF7A22C8B640800C9ABA3 /* Frameworks */,
+				3F9CF7A32C8B640800C9ABA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DemoTVOS;
+			packageProductDependencies = (
+				3F9CF7B52C8B648400C9ABA3 /* TradingView */,
+			);
+			productName = DemoTVOS;
+			productReference = 3F9CF7A52C8B640800C9ABA3 /* DemoTVOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3F9CF7BA2C8B7A3D00C9ABA3 /* DemoVisionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3F9CF7CD2C8B7A3E00C9ABA3 /* Build configuration list for PBXNativeTarget "DemoVisionOS" */;
+			buildPhases = (
+				3F9CF7B72C8B7A3D00C9ABA3 /* Sources */,
+				3F9CF7B82C8B7A3D00C9ABA3 /* Frameworks */,
+				3F9CF7B92C8B7A3D00C9ABA3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DemoVisionOS;
+			packageProductDependencies = (
+				3F9CF7CE2C8B943D00C9ABA3 /* TradingView */,
+			);
+			productName = DemoVisionOS;
+			productReference = 3F9CF7BB2C8B7A3D00C9ABA3 /* DemoVisionOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3FD7F1292C8A35F30057062E /* Demo */ = {
@@ -177,6 +233,12 @@
 					3F1EDB912C8B3F4F00794677 = {
 						CreatedOnToolsVersion = 15.4;
 					};
+					3F9CF7A42C8B640800C9ABA3 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					3F9CF7BA2C8B7A3D00C9ABA3 = {
+						CreatedOnToolsVersion = 15.4;
+					};
 					3FD7F1292C8A35F30057062E = {
 						CreatedOnToolsVersion = 15.4;
 					};
@@ -197,6 +259,8 @@
 			targets = (
 				3FD7F1292C8A35F30057062E /* Demo */,
 				3F1EDB912C8B3F4F00794677 /* DemoWatchOS Watch App */,
+				3F9CF7A42C8B640800C9ABA3 /* DemoTVOS */,
+				3F9CF7BA2C8B7A3D00C9ABA3 /* DemoVisionOS */,
 			);
 		};
 /* End PBXProject section */
@@ -206,7 +270,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F1EDB992C8B3F5000794677 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7A32C8B640800C9ABA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7B92C8B7A3D00C9ABA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,7 +291,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FD7F1322C8A35F40057062E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,8 +301,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F1EDB972C8B3F4F00794677 /* ContentView.swift in Sources */,
-				3F1EDB952C8B3F4F00794677 /* DemoWatchOSApp.swift in Sources */,
+				3F9CF7A02C8B633700C9ABA3 /* ContentView.swift in Sources */,
+				3F9CF79F2C8B633500C9ABA3 /* DemoApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7A12C8B640800C9ABA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F9CF7B42C8B646D00C9ABA3 /* ContentView.swift in Sources */,
+				3F9CF7B32C8B646B00C9ABA3 /* DemoApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3F9CF7B72C8B7A3D00C9ABA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3F9CF7D12C8B963800C9ABA3 /* ContentView.swift in Sources */,
+				3F9CF7D02C8B963500C9ABA3 /* DemoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +351,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"DemoWatchOS Watch App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoWatchOS;
@@ -286,7 +379,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"DemoWatchOS Watch App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoWatchOS;
@@ -305,6 +397,110 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.5;
+			};
+			name = Release;
+		};
+		3F9CF7B12C8B640A00C9ABA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = home.incognito.DemoTVOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.5;
+			};
+			name = Debug;
+		};
+		3F9CF7B22C8B640A00C9ABA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = home.incognito.DemoTVOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.5;
+			};
+			name = Release;
+		};
+		3F9CF7CB2C8B7A3E00C9ABA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				EXCLUDED_ARCHS = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = home.incognito.DemoVisionOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.2;
+			};
+			name = Debug;
+		};
+		3F9CF7CC2C8B7A3E00C9ABA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				EXCLUDED_ARCHS = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = home.incognito.DemoVisionOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.2;
 			};
 			name = Release;
 		};
@@ -437,7 +633,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -469,7 +664,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Demo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -505,6 +699,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		3F9CF7B02C8B640A00C9ABA3 /* Build configuration list for PBXNativeTarget "DemoTVOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F9CF7B12C8B640A00C9ABA3 /* Debug */,
+				3F9CF7B22C8B640A00C9ABA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3F9CF7CD2C8B7A3E00C9ABA3 /* Build configuration list for PBXNativeTarget "DemoVisionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F9CF7CB2C8B7A3E00C9ABA3 /* Debug */,
+				3F9CF7CC2C8B7A3E00C9ABA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3FD7F1252C8A35F30057062E /* Build configuration list for PBXProject "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -527,6 +739,14 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		3F1EDBA42C8B3F7D00794677 /* TradingView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TradingView;
+		};
+		3F9CF7B52C8B648400C9ABA3 /* TradingView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TradingView;
+		};
+		3F9CF7CE2C8B943D00C9ABA3 /* TradingView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TradingView;
 		};
