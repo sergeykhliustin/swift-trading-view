@@ -60,3 +60,6 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+.swiftpm
+Demo/Demo.xcodeproj/project.xcworkspace/xcshareddata
+Demo.xcworkspace/xcshareddata
