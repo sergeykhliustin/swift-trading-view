@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1EDB9F2C8B3F5000794677 /* DemoWatchOS Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3F1EDBA52C8B3F7D00794677 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1EDBA42C8B3F7D00794677 /* TradingView */; };
 		3F9CF79F2C8B633500C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3F9CF7A02C8B633700C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
@@ -21,30 +20,6 @@
 		3FD7F1302C8A35F30057062E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
 		3FD7F13D2C8A365E0057062E /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD7F13C2C8A365E0057062E /* TradingView */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3F1EDB9D2C8B3F5000794677 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3FD7F1222C8A35F30057062E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3F1EDB912C8B3F4F00794677;
-			remoteInfo = "DemoWatchOS Watch App";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3F1EDBA02C8B3F5000794677 /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-				3F1EDB9F2C8B3F5000794677 /* DemoWatchOS Watch App.app in Embed Watch Content */,
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DemoWatchOS Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,12 +180,10 @@
 				3FD7F1262C8A35F30057062E /* Sources */,
 				3FD7F1272C8A35F30057062E /* Frameworks */,
 				3FD7F1282C8A35F30057062E /* Resources */,
-				3F1EDBA02C8B3F5000794677 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3F1EDB9E2C8B3F5000794677 /* PBXTargetDependency */,
 			);
 			name = Demo;
 			packageProductDependencies = (
@@ -335,14 +308,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		3F1EDB9E2C8B3F5000794677 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3F1EDB912C8B3F4F00794677 /* DemoWatchOS Watch App */;
-			targetProxy = 3F1EDB9D2C8B3F5000794677 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		3F1EDBA12C8B3F5000794677 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -351,11 +316,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoWatchOS;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = home.incognito.Demo;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -379,11 +346,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoWatchOS;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = home.incognito.Demo;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
