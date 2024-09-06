@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 public struct Candles: PrimaryContent {
     public var xAxisLabelFont: Font
     public var xAxisLabelColor: Color

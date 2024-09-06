@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftTA
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 public struct TradingView: View {
     let data: [CandleData]
     let primaryContent: [PrimaryContent]
@@ -13,7 +13,7 @@ public struct TradingView: View {
         data: [CandleData],
         candleWidth: ClosedRange<CGFloat> = 2...20,
         candleSpacing: CGFloat = 2,
-        scrollTrailingInset: CGFloat = 200,
+        scrollTrailingInset: CGFloat = 0,
         primaryContent: [PrimaryContent]
     ) {
         self.data = data
@@ -104,23 +104,36 @@ public struct TradingView: View {
                             scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
                         }
                     }
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { val in
-                                let delta = val / self.lastScaleValue
-                                self.lastScaleValue = val
-                                let newScale = self.candleWidth * delta
+                    .onChange(of: candleWidth) { _ in
+                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                    }
+                    #if !os(watchOS)
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { val in
+                                    let delta = val / self.lastScaleValue
+                                    self.lastScaleValue = val
+                                    let newScale = self.candleWidth * delta
 
-                                if candleWidthRange.contains(newScale) {
-                                    self.candleWidth = newScale
+                                    if candleWidthRange.contains(newScale) {
+                                        self.candleWidth = newScale
+                                    }
                                 }
-                                scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                            }
-                            .onEnded { _ in
-                                // without this the next gesture will be broken
-                                self.lastScaleValue = 1.0
-                            }
-                    )
+                                .onEnded { _ in
+                                    // without this the next gesture will be broken
+                                    self.lastScaleValue = 1.0
+                                }
+                        )
+                    #else
+                        .focusable()
+                        .digitalCrownRotation(
+                            $candleWidth,
+                            from: candleWidthRange.lowerBound,
+                            through: candleWidthRange.upperBound,
+                            by: (candleWidthRange.upperBound - candleWidthRange.lowerBound) / 20,
+                            sensitivity: .low
+                        )
+                    #endif
                 }
             }
         }
@@ -139,12 +152,13 @@ public struct TradingView: View {
     }
 }
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 struct TradindView_Preview: PreviewProvider {
     static var previews: some View {
         let data = CandleData.generateSampleData(count: 1000)
         return TradingView(
             data: data,
+            scrollTrailingInset: 0,
             primaryContent: [
                 XAxis(),
                 Candles(),
@@ -154,4 +168,3 @@ struct TradindView_Preview: PreviewProvider {
         )
     }
 }
-

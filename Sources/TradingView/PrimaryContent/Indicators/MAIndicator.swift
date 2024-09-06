@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import SwiftTA
 
-@available(macOS 12.0, iOS 15.0, *)
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, *)
 public struct MAIndicator: PrimaryContent {
     public struct Period {
         public var value: Int

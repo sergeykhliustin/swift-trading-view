@@ -4,8 +4,10 @@ DEVELOPER = $(shell xcode-select -print-path)
 TOOLCHAIN = $(DEVELOPER)/Toolchains/XcodeDefault.xctoolchain
 IOS_SDK_VERSION = $(shell xcrun -sdk iphoneos --show-sdk-version)
 MACOS_SDK_VERSION = $(shell xcrun -sdk macosx --show-sdk-version)
+WATCHOS_SDK_VERSION = $(shell xcrun -sdk watchos --show-sdk-version)
 IPHONEOS_DEPLOYMENT_TARGET = 12.0
 MACOSX_DEPLOYMENT_TARGET = 10.13
+WATCHOS_DEPLOYMENT_TARGET = 4.0
 
 .PHONY: all clean build_ta_lib
 
@@ -17,9 +19,9 @@ ifndef VERSION
 	$(error VERSION is not set. Use 'make build_ta_lib VERSION=X.X.X')
 endif
 	@echo "Building TA-Lib version $(VERSION)"
-	@$(MAKE) *build*ta_lib VERSION=$(VERSION)
+	@$(MAKE) _build_ta_lib VERSION=$(VERSION)
 
-*build*ta_lib: $(TA_LIB_DIR)
+_build_ta_lib: $(TA_LIB_DIR)
 	# Build for iphoneos (arm64)
 	$(call build_for_device,arm64,iphoneos,arm-apple-darwin)
 	
@@ -34,6 +36,21 @@ endif
 	
 	# Build for macOS (x86_64)
 	$(call build_for_macos,x86_64,macosx,x86_64-apple-darwin)
+	
+	# Build for watchOS (arm64)
+	$(call build_for_watchos,arm64,watchos,arm-apple-darwin)
+	
+	# Build for watchOS (arm64_32)
+	$(call build_for_watchos,arm64_32,watchos,arm-apple-darwin)
+	
+	# Build for watchOS (armv7k)
+	$(call build_for_watchos,armv7k,watchos,arm-apple-darwin)
+	
+	# Build for watchOS simulator (arm64)
+	$(call build_for_watchos_simulator,arm64,watchsimulator,arm-apple-darwin)
+	
+	# Build for watchOS simulator (x86_64)
+	$(call build_for_watchos_simulator,x86_64,watchsimulator,x86_64-apple-darwin)
 	
 	@$(MAKE) _create_xcframework
 
@@ -75,10 +92,36 @@ define build_for_macos
 	make install)
 endef
 
+define build_for_watchos
+	SDK=$(DEVELOPER)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_SDK_VERSION).sdk; \
+	export CC=$(TOOLCHAIN)/usr/bin/clang; \
+	export CFLAGS="-arch $(1) -isysroot $$SDK -mwatchos-version-min=$(WATCHOS_DEPLOYMENT_TARGET)"; \
+	export LDFLAGS="-arch $(1) -isysroot $$SDK"; \
+	(cd $(TA_LIB_DIR) && \
+	./configure --host=$(3) --prefix=$(CURDIR)/$(TA_LIB_DIR)/install_watchos_$(1) --enable-static --disable-shared && \
+	make clean && \
+	make && \
+	make install)
+endef
+
+define build_for_watchos_simulator
+	SDK=$(DEVELOPER)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCHOS_SDK_VERSION).sdk; \
+	export CC=$(TOOLCHAIN)/usr/bin/clang; \
+	export CFLAGS="-arch $(1) -isysroot $$SDK -mwatchos-simulator-version-min=$(WATCHOS_DEPLOYMENT_TARGET) -target $(1)-apple-watchos-simulator"; \
+	export LDFLAGS="-arch $(1) -isysroot $$SDK -target $(1)-apple-watchos-simulator"; \
+	(cd $(TA_LIB_DIR) && \
+	./configure --host=$(3) --prefix=$(CURDIR)/$(TA_LIB_DIR)/install_watchsimulator_$(1) --enable-static --disable-shared && \
+	make clean && \
+	make && \
+	make install)
+endef
+
 _create_xcframework:
 	# Create necessary directories
 	mkdir -p $(TA_LIB_DIR)/install_iphonesimulator_universal/lib
 	mkdir -p $(TA_LIB_DIR)/install_macosx_universal/lib
+	mkdir -p $(TA_LIB_DIR)/install_watchos_universal/lib
+	mkdir -p $(TA_LIB_DIR)/install_watchsimulator_universal/lib
 	
 	# Combine simulator architectures into a fat library
 	lipo -create \
@@ -92,19 +135,36 @@ _create_xcframework:
 		$(TA_LIB_DIR)/install_macosx_x86_64/lib/libta_lib.a \
 		-output $(TA_LIB_DIR)/install_macosx_universal/lib/libta_lib.a
 	
+	# Combine watchOS device architectures into a fat library
+	lipo -create \
+		$(TA_LIB_DIR)/install_watchos_arm64/lib/libta_lib.a \
+		$(TA_LIB_DIR)/install_watchos_arm64_32/lib/libta_lib.a \
+		$(TA_LIB_DIR)/install_watchos_armv7k/lib/libta_lib.a \
+		-output $(TA_LIB_DIR)/install_watchos_universal/lib/libta_lib.a
+	
+	# Combine watchOS simulator architectures into a fat library
+	lipo -create \
+		$(TA_LIB_DIR)/install_watchsimulator_arm64/lib/libta_lib.a \
+		$(TA_LIB_DIR)/install_watchsimulator_x86_64/lib/libta_lib.a \
+		-output $(TA_LIB_DIR)/install_watchsimulator_universal/lib/libta_lib.a
+	
 	# Create the module map
 	echo "module TALib {" > $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib/module.modulemap
 	echo "    umbrella header \"ta_libc.h\"" >> $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib/module.modulemap
 	echo "    export *" >> $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib/module.modulemap
 	echo "}" >> $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib/module.modulemap
 
-	# Create XCFramework from fat libraries for the simulator, device, and macOS
+	# Create XCFramework from fat libraries for all platforms
 	xcodebuild -create-xcframework \
 		-library $(TA_LIB_DIR)/install_iphoneos_arm64/lib/libta_lib.a \
 		-headers $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib \
 		-library $(TA_LIB_DIR)/install_iphonesimulator_universal/lib/libta_lib.a \
 		-headers $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib \
 		-library $(TA_LIB_DIR)/install_macosx_universal/lib/libta_lib.a \
+		-headers $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib \
+		-library $(TA_LIB_DIR)/install_watchos_universal/lib/libta_lib.a \
+		-headers $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib \
+		-library $(TA_LIB_DIR)/install_watchsimulator_universal/lib/libta_lib.a \
 		-headers $(TA_LIB_DIR)/install_iphoneos_arm64/include/ta-lib \
 		-output $(TA_LIB_OUTPUT_DIR)/TALib.xcframework
 	@echo "XCFramework with module map created at $(TA_LIB_OUTPUT_DIR)/TALib.xcframework"

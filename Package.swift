@@ -6,7 +6,8 @@ let package = Package(
     name: "SwiftTradingView",
     platforms: [
         .iOS(.v12),
-        .macOS(.v10_13)
+        .macOS(.v10_13),
+        .watchOS(.v4)
     ],
     products: [
         .library(
