@@ -123,6 +123,42 @@ public struct TALib {
         return (upperBand, middleBand, lowerBand)
     }
 
+    /// Calculates the Relative Strength Index (RSI) for a given set of data.
+    ///
+    /// - Parameters:
+    ///   - inReal: An array of Double values representing the input data (typically closing prices).
+    ///   - timePeriod: The number of periods to use in the RSI calculation. Typical values are 14, 9, or 25.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - values: An array of Double values representing the calculated RSI.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func RSI(inReal: [Double], timePeriod: Int) throws -> (beginIndex: Int, values: [Double]) {
+        guard inReal.count > timePeriod else {
+            throw TALibError.inputArrayTooSmall
+        }
+
+        let startIdx: Int32 = 0
+        let endIdx: Int32 = Int32(inReal.count - 1)
+        let optInTimePeriod: Int32 = Int32(timePeriod)
+
+        var outBegIdx: Int32 = 0
+        var outNBElement: Int32 = 0
+
+        // Allocate memory for the worst case scenario (same size as input)
+        let outReal = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        defer { outReal.deallocate() }
+
+        let retCode = inReal.withUnsafeBufferPointer { inRealPtr in
+            TA_RSI(startIdx, endIdx, inRealPtr.baseAddress, optInTimePeriod,
+                   &outBegIdx, &outNBElement, outReal)
+        }
+
+        try checkReturnCode(retCode)
+
+        // Only return the valid portion of the output
+        return (Int(outBegIdx), Array(UnsafeBufferPointer(start: outReal, count: Int(outNBElement))))
+    }
+
     // MARK: - Helper Functions
 
     /// Checks the return code from TALib functions and throws appropriate errors.
@@ -134,9 +170,9 @@ public struct TALib {
         case TA_SUCCESS:
             return
         case TA_OUT_OF_RANGE_START_INDEX,
-             TA_OUT_OF_RANGE_END_INDEX,
-             TA_INPUT_NOT_ALL_INITIALIZE,
-             TA_BAD_PARAM:
+            TA_OUT_OF_RANGE_END_INDEX,
+            TA_INPUT_NOT_ALL_INITIALIZE,
+        TA_BAD_PARAM:
             throw TALibError.invalidParameter
         case TA_ALLOC_ERR:
             throw TALibError.allocationFailed

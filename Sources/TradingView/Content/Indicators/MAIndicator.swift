@@ -28,7 +28,7 @@ extension MAType {
 }
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-public struct MAIndicator: PrimaryContent {
+public struct MAIndicator: Content {
     public struct Period {
         public var value: Int
         public var color: Color

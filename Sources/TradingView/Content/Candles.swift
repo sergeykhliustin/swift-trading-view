@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-public struct Candles: PrimaryContent {
+public struct Candles: Content {
     public var negativeCandleColor: Color
     public var positiveCandleColor: Color
 

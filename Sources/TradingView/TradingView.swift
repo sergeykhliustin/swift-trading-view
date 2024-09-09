@@ -4,24 +4,54 @@ import SwiftTA
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
     let data: [CandleData]
-    let primaryContent: [any PrimaryContent]
+    let yAxis: Axis?
+    let xAxis: Axis?
+    let primaryContent: [any Content]
+    let secondaryContent: [any Content]
     let candleWidthRange: ClosedRange<CGFloat>
     let candleSpacing: CGFloat
     let scrollTrailingInset: CGFloat
+    let secondaryContentHeight: CGFloat
+    let secondaryContentSpacing: CGFloat
+    let legendSpacingX: CGFloat
+    let legendSpacingY: CGFloat
+    let legendPaddingLeading: CGFloat
+    let contentPaddingTop: CGFloat
+    let contentPaddingBottom: CGFloat
 
     public init(
         data: [CandleData],
         candleWidth: ClosedRange<CGFloat> = 2...20,
         candleSpacing: CGFloat = 2,
         scrollTrailingInset: CGFloat = 0,
-        primaryContent: [any PrimaryContent]
+        secondaryContentHeight: CGFloat = 100,
+        secondaryContentSpacing: CGFloat = 5,
+        legendSpacingX: CGFloat = 5,
+        legendSpacingY: CGFloat = 2,
+        legendPaddingLeading: CGFloat = 10,
+        contentPaddingTop: CGFloat = 15,
+        contentPaddingBottom: CGFloat = 20,
+        xAxis: Axis? = XAxis(),
+        yAxis: Axis? = YAxis(),
+        primaryContent: [any Content],
+        secondaryContent: [any Content] = []
     ) {
         self.data = data
+        self.xAxis = xAxis
+        self.yAxis = yAxis
         self.primaryContent = primaryContent
         self.candleWidth = (candleWidth.lowerBound + candleWidth.upperBound) / 2
         self.candleWidthRange = candleWidth
         self.candleSpacing = candleSpacing
         self.scrollTrailingInset = scrollTrailingInset
+        self.secondaryContent = secondaryContent
+        self.secondaryContentHeight = secondaryContentHeight
+        self.secondaryContentSpacing = secondaryContentSpacing
+        self.legendSpacingX = legendSpacingX
+        self.legendSpacingY = legendSpacingY
+        self.legendPaddingLeading = legendPaddingLeading
+        self.contentPaddingTop = contentPaddingTop
+        self.contentPaddingBottom = contentPaddingBottom
     }
 
     @State private var candleWidth: CGFloat
@@ -43,6 +73,8 @@ public struct TradingView: View {
                                 guard let candlesInfo = candlesInfo(for: geometry.size) else {
                                     return
                                 }
+                                let primaryContentBottomOffset =
+                                    (secondaryContentHeight + secondaryContentSpacing) * CGFloat(secondaryContent.count) + contentPaddingBottom
                                 let calculatedData = primaryContent.map({
                                     $0.calculate(candlesInfo: candlesInfo)
                                 })
@@ -55,14 +87,27 @@ public struct TradingView: View {
                                     context: context,
                                     contextSize: size,
                                     visibleBounds: CGRect(
-                                        origin: CGPoint(x: scrollOffset, y: 0),
-                                        size: geometry.size
+                                        origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
+                                        size: CGSize(
+                                            width: geometry.size.width,
+                                            height: geometry.size.height
+                                                - primaryContentBottomOffset - contentPaddingTop
+                                        )
                                     ),
                                     candleWidth: candleWidth,
                                     candleSpacing: candleSpacing,
-                                    verticalPadding: 20,
                                     yBounds: yBounds
                                 )
+                                yAxis?
+                                    .draw(
+                                        contextInfo: contextInfo,
+                                        candlesInfo: candlesInfo
+                                    )
+                                xAxis?
+                                    .draw(
+                                        contextInfo: contextInfo,
+                                        candlesInfo: candlesInfo
+                                    )
                                 let zipped = zip(primaryContent, calculatedData)
                                 zipped
                                     .forEach {
@@ -77,11 +122,63 @@ public struct TradingView: View {
                                 })
                                 flowLayout(
                                     context: context,
-                                    bounds: contextInfo.visibleBounds,
+                                    bounds: CGRect(
+                                        origin: CGPoint(
+                                            x: scrollOffset + legendPaddingLeading,
+                                            y: 0
+                                        ),
+                                        size: CGSize(
+                                            width: geometry.size.width,
+                                            height: geometry.size.height - primaryContentBottomOffset
+                                        )
+                                    ),
                                     text: legend.flatMap { $0 },
-                                    spacingX: 5,
-                                    spacingY: 2
+                                    spacingX: legendSpacingX,
+                                    spacingY: legendSpacingY
                                 )
+                                for (index, content) in secondaryContent.enumerated() {
+                                    let calculatedData = content.calculate(candlesInfo: candlesInfo)
+                                    let contextInfo = ContextInfo(
+                                        context: context,
+                                        contextSize: size,
+                                        visibleBounds: CGRect(
+                                            origin: CGPoint(
+                                                x: scrollOffset,
+                                                y: size.height - secondaryContentHeight
+                                                    * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
+                                            ),
+                                            size: CGSize(
+                                                width: geometry.size.width,
+                                                height: secondaryContentHeight
+                                            )
+                                        ),
+                                        candleWidth: candleWidth,
+                                        candleSpacing: candleSpacing,
+                                        yBounds: (min: calculatedData.min, max: calculatedData.max)
+                                    )
+                                    content.draw(
+                                        contextInfo: contextInfo,
+                                        candlesInfo: candlesInfo,
+                                        calculatedData: calculatedData
+                                    )
+                                    flowLayout(
+                                        context: context,
+                                        bounds: CGRect(
+                                            origin: CGPoint(
+                                                x: scrollOffset + legendPaddingLeading,
+                                                y: size.height - secondaryContentHeight
+                                                    * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
+                                            ),
+                                            size: CGSize(
+                                                width: geometry.size.width,
+                                                height: secondaryContentHeight
+                                            )
+                                        ),
+                                        text: content.legend(candlesInfo: candlesInfo, calculatedData: calculatedData),
+                                        spacingX: legendSpacingX,
+                                        spacingY: legendSpacingY
+                                    )
+                                }
                             }
                             .frame(
                                 width: CGFloat(data.count)
@@ -202,18 +299,20 @@ public struct TradingView: View {
 }
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-struct TradindView_Preview: PreviewProvider {
+struct TradingView_Preview: PreviewProvider {
     @ViewBuilder
     static var previews: some View {
         let data = CandleData.generateSampleData(count: 1000)
         TradingView(
             data: data,
             primaryContent: [
-                XAxis(),
                 Candles(),
-                YAxis(),
                 MAIndicator(),
-                BBIndicator()
+                BBIndicator(),
+            ],
+            secondaryContent: [
+                RSIIndicator(),
+                RSIIndicator()
             ]
         )
         .background(Color.black)

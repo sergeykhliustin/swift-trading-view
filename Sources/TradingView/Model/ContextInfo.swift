@@ -22,9 +22,6 @@ public struct ContextInfo {
     /// The spacing between each candle in the chart.
     public var candleSpacing: CGFloat
 
-    /// The vertical padding at the top and bottom of the chart.
-    public var verticalPadding: CGFloat
-
     /// The minimum and maximum y-values in the visible range of the chart.
     public var yBounds: (min: Double, max: Double)
 
@@ -47,7 +44,6 @@ public struct ContextInfo {
         visibleBounds: CGRect,
         candleWidth: CGFloat,
         candleSpacing: CGFloat,
-        verticalPadding: CGFloat,
         yBounds: (min: Double, max: Double)
     ) {
         self.context = context
@@ -55,9 +51,8 @@ public struct ContextInfo {
         self.visibleBounds = visibleBounds
         self.candleWidth = candleWidth
         self.candleSpacing = candleSpacing
-        self.verticalPadding = verticalPadding
         self.yBounds = yBounds
-        self.yScale = (contextSize.height - verticalPadding * 2) / CGFloat(yBounds.max - yBounds.min)
+        self.yScale = (visibleBounds.height) / CGFloat(yBounds.max - yBounds.min)
     }
 
     /// The total width of a candle, including its spacing.
@@ -65,17 +60,12 @@ public struct ContextInfo {
         return candleWidth + candleSpacing
     }
 
-    /// The drawable height of the chart, excluding vertical padding.
-    public var drawableHeight: CGFloat {
-        return contextSize.height - (2 * verticalPadding)
-    }
-
     /// Converts a y-value to its corresponding y-coordinate in the context.
     ///
     /// - Parameter value: The y-value to convert.
     /// - Returns: The corresponding y-coordinate in the context.
     public func yCoordinate(for value: Double) -> CGFloat {
-        return verticalPadding + CGFloat(yBounds.max - value) * yScale
+        return CGFloat(yBounds.max - value) * yScale + visibleBounds.minY
     }
 
     /// Converts an x-index to its corresponding x-coordinate in the context.
