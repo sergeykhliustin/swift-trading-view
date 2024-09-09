@@ -102,7 +102,7 @@ Here's a basic example of how to use Swift Trading View in your SwiftUI applicat
 
 ```swift
 import SwiftUI
-import TradingView
+import SwiftTradingView
 
 struct ContentView: View {
     var body: some View {
