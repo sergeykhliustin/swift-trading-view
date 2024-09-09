@@ -13,8 +13,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "TradingView",
-            targets: ["TradingView"]
+            name: "SwiftTradingView",
+            targets: ["SwiftTradingView"]
         ),
         .library(
             name: "SwiftTA",
@@ -23,7 +23,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "TradingView",
+            name: "SwiftTradingView",
             dependencies: [
                 "SwiftTA"
             ]
