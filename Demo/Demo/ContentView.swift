@@ -9,6 +9,9 @@ struct ContentView: View {
             primaryContent: [
                 Candles(),
                 MAIndicator(),
+            ],
+            secondaryContent: [
+                RSIIndicator()
             ]
         )
     }

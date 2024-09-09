@@ -83,13 +83,14 @@ public struct TradingView: View {
                                 ) { result, item in
                                     (min(result.0, item.min), max(result.1, item.max))
                                 }
+                                let width = min(size.width - scrollOffset, geometry.size.width)
                                 let contextInfo = ContextInfo(
                                     context: context,
                                     contextSize: size,
                                     visibleBounds: CGRect(
                                         origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
                                         size: CGSize(
-                                            width: geometry.size.width,
+                                            width: width,
                                             height: geometry.size.height
                                                 - primaryContentBottomOffset - contentPaddingTop
                                         )
@@ -128,7 +129,7 @@ public struct TradingView: View {
                                             y: 0
                                         ),
                                         size: CGSize(
-                                            width: geometry.size.width,
+                                            width: width,
                                             height: geometry.size.height - primaryContentBottomOffset
                                         )
                                     ),
@@ -148,7 +149,7 @@ public struct TradingView: View {
                                                     * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
                                             ),
                                             size: CGSize(
-                                                width: geometry.size.width,
+                                                width: width,
                                                 height: secondaryContentHeight
                                             )
                                         ),
@@ -170,7 +171,7 @@ public struct TradingView: View {
                                                     * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
                                             ),
                                             size: CGSize(
-                                                width: geometry.size.width,
+                                                width: width,
                                                 height: secondaryContentHeight
                                             )
                                         ),
@@ -305,6 +306,7 @@ struct TradingView_Preview: PreviewProvider {
         let data = CandleData.generateSampleData(count: 1000)
         TradingView(
             data: data,
+            scrollTrailingInset: 100,
             primaryContent: [
                 Candles(),
                 MAIndicator(),
@@ -315,6 +317,5 @@ struct TradingView_Preview: PreviewProvider {
                 RSIIndicator()
             ]
         )
-        .background(Color.black)
     }
 }
