@@ -6,14 +6,15 @@ struct ContentView: View {
     var body: some View {
         TradingView(
             data: data, 
+            primaryContentHeight: 100,
             primaryContent: [
                 Candles(),
                 MAIndicator(),
             ],
             secondaryContent: [
                 RSIIndicator(),
-                MACDIndicator(),
-                KDJIndicator()
+//                MACDIndicator(),
+//                KDJIndicator()
             ]
         )
     }
