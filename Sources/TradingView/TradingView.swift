@@ -213,6 +213,7 @@ struct TradindView_Preview: PreviewProvider {
                 Candles(),
                 YAxis(),
                 MAIndicator(),
+                BBIndicator()
             ]
         )
         .background(Color.black)
