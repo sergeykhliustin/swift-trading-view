@@ -1,29 +1,107 @@
 import SwiftUI
 import SwiftTA
 
+/// A customizable view for displaying financial trading data with various indicators.
+///
+/// `TradingView` is a SwiftUI component that renders a scrollable, zoomable chart
+/// for displaying candlestick data along with primary and secondary indicators.
+/// It supports custom axes, dynamic legends, and interactive gestures for zooming and scrolling.
+///
+/// # Example Usage:
+/// ```swift
+/// TradingView(
+///     data: data,
+///     scrollTrailingInset: 100,
+///     primaryContentHeight: 120,
+///     primaryContent: [
+///         Candles(),
+///         MAIndicator(),
+///         BBIndicator(),
+///     ],
+///     secondaryContent: [
+///         MACDIndicator()
+///     ]
+/// )
+/// ```
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
-    let data: [CandleData]
-    let yAxis: Axis?
-    let xAxis: Axis?
-    let primaryContent: [any Content]
-    let secondaryContent: [any Content]
-    let candleWidthRange: ClosedRange<CGFloat>
-    let candleSpacing: CGFloat
-    let scrollTrailingInset: CGFloat
-    let secondaryContentHeight: CGFloat
-    let secondaryContentSpacing: CGFloat
-    let legendSpacingX: CGFloat
-    let legendSpacingY: CGFloat
-    let legendPaddingLeading: CGFloat
-    let contentPaddingTop: CGFloat
-    let contentPaddingBottom: CGFloat
+    // MARK: - Properties
 
+    /// The array of candle data to be displayed in the chart.
+    public let data: [CandleData]
+
+    /// The y-axis configuration for the chart. If nil, no y-axis will be drawn.
+    public let yAxis: Axis?
+
+    /// The x-axis configuration for the chart. If nil, no x-axis will be drawn.
+    public let xAxis: Axis?
+
+    /// An array of primary content indicators to be displayed in the main chart area.
+    public let primaryContent: [any Content]
+
+    /// An array of secondary content indicators to be displayed below the main chart area.
+    public let secondaryContent: [any Content]
+
+    /// The range of possible candle widths for zooming.
+    public let candleWidthRange: ClosedRange<CGFloat>
+
+    /// The spacing between individual candles.
+    public let candleSpacing: CGFloat
+
+    /// The inset applied to the trailing edge of the scroll view.
+    public let scrollTrailingInset: CGFloat
+
+    /// The height of each secondary content indicator.
+    public let secondaryContentHeight: CGFloat
+
+    /// The vertical spacing between secondary content indicators.
+    public let secondaryContentSpacing: CGFloat
+
+    /// The horizontal spacing between legend items.
+    public let legendSpacingX: CGFloat
+
+    /// The vertical spacing between legend items when wrapped to a new line.
+    public let legendSpacingY: CGFloat
+
+    /// The leading padding for the legend items.
+    public let legendPaddingLeading: CGFloat
+
+    /// The top padding for the content area.
+    public let contentPaddingTop: CGFloat
+
+    /// The bottom padding for the content area.
+    public let contentPaddingBottom: CGFloat
+
+    /// The height of the primary content area. If nil, it will be calculated automatically.
+    public let primaryContentHeight: CGFloat?
+
+    // MARK: - Initializer
+
+    /// Initializes a new instance of `TradingView`.
+    ///
+    /// - Parameters:
+    ///   - data: An array of `CandleData` representing the financial data to be displayed.
+    ///   - candleWidth: The range of possible candle widths for zooming.
+    ///   - candleSpacing: The spacing between individual candles.
+    ///   - scrollTrailingInset: The inset applied to the trailing edge of the scroll view.
+    ///   - primaryContentHeight: The height of the primary content area. If nil, it will be calculated automatically.
+    ///   - secondaryContentHeight: The height of each secondary content indicator.
+    ///   - secondaryContentSpacing: The vertical spacing between secondary content indicators.
+    ///   - legendSpacingX: The horizontal spacing between legend items.
+    ///   - legendSpacingY: The vertical spacing between legend items when wrapped to a new line.
+    ///   - legendPaddingLeading: The leading padding for the legend items.
+    ///   - contentPaddingTop: The top padding for the content area.
+    ///   - contentPaddingBottom: The bottom padding for the content area.
+    ///   - xAxis: The x-axis configuration. If nil, no x-axis will be drawn.
+    ///   - yAxis: The y-axis configuration. If nil, no y-axis will be drawn.
+    ///   - primaryContent: An array of primary content indicators to be displayed in the main chart area.
+    ///   - secondaryContent: An array of secondary content indicators to be displayed below the main chart area.
     public init(
         data: [CandleData],
         candleWidth: ClosedRange<CGFloat> = 2...20,
         candleSpacing: CGFloat = 2,
         scrollTrailingInset: CGFloat = 0,
+        primaryContentHeight: CGFloat? = nil,
         secondaryContentHeight: CGFloat = 100,
         secondaryContentSpacing: CGFloat = 5,
         legendSpacingX: CGFloat = 5,
@@ -40,6 +118,7 @@ public struct TradingView: View {
         self.xAxis = xAxis
         self.yAxis = yAxis
         self.primaryContent = primaryContent
+        self.primaryContentHeight = primaryContentHeight
         self.candleWidth = (candleWidth.lowerBound + candleWidth.upperBound) / 2
         self.candleWidthRange = candleWidth
         self.candleSpacing = candleSpacing
@@ -91,7 +170,7 @@ public struct TradingView: View {
                                         origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
                                         size: CGSize(
                                             width: width,
-                                            height: geometry.size.height
+                                            height: size.height
                                                 - primaryContentBottomOffset - contentPaddingTop
                                         )
                                     ),
@@ -184,7 +263,8 @@ public struct TradingView: View {
                             .frame(
                                 width: CGFloat(data.count)
                                     * (candleWidth + candleSpacing)
-                                    + scrollTrailingInset
+                                    + scrollTrailingInset,
+                                height: primaryContentHeight != nil ? primaryContentHeight! + contentPaddingTop + contentPaddingBottom + (secondaryContentHeight + secondaryContentSpacing) * CGFloat(secondaryContent.count) : nil
                             )
 
                             GeometryReader { proxy in
@@ -307,15 +387,14 @@ struct TradingView_Preview: PreviewProvider {
         TradingView(
             data: data,
             scrollTrailingInset: 100,
+            primaryContentHeight: 120,
             primaryContent: [
                 Candles(),
                 MAIndicator(),
                 BBIndicator(),
             ],
             secondaryContent: [
-                MACDIndicator(),
-                KDJIndicator(),
-                WRIndicator()
+                MACDIndicator()
             ]
         )
     }
