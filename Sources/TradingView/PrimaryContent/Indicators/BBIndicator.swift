@@ -107,8 +107,7 @@ public struct BBIndicator: PrimaryContent {
         guard let values = calculatedData.values as? [String: [Double]],
             let upperBand = values["upper"],
             let middleBand = values["middle"],
-            let lowerBand = values["lower"],
-            let bandwidths = values["bandwidths"]
+            let lowerBand = values["lower"]
         else {
             return []
         }
@@ -133,11 +132,6 @@ public struct BBIndicator: PrimaryContent {
         candlesInfo: CandlesInfo,
         calculatedData: CalculatedData
     ) {
-        let yScale = contextInfo.yScale
-        let candleWidth = contextInfo.candleWidth
-        let candleSpacing = contextInfo.candleSpacing
-        let verticalPadding = contextInfo.verticalPadding
-        let yBounds = contextInfo.yBounds
         let context = contextInfo.context
 
         guard let values = calculatedData.values as? [String: [Double]],
@@ -153,10 +147,8 @@ public struct BBIndicator: PrimaryContent {
         let drawBand = { (band: [Double], color: Color) in
             let path = Path { path in
                 for (index, value) in band.enumerated() {
-                    let x =
-                        CGFloat(index + beginIndex) * (candleWidth + candleSpacing) + candleWidth
-                        / 2
-                    let y = verticalPadding + CGFloat(yBounds.max - value) * yScale
+                    let x = contextInfo.xCoordinate(for: index + beginIndex)
+                    let y = contextInfo.yCoordinate(for: value)
 
                     if index == 0 {
                         path.move(to: CGPoint(x: x, y: y))

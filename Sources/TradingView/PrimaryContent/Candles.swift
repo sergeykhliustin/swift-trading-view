@@ -36,24 +36,20 @@ public struct Candles: PrimaryContent {
     ) {
         let context = contextInfo.context
         let candleWidth = contextInfo.candleWidth
-        let candleSpacing = contextInfo.candleSpacing
-        let verticalPadding = contextInfo.verticalPadding
-        let yScale = contextInfo.yScale
-        let yBounds = contextInfo.yBounds
 
         for (index, item) in candlesInfo.visibleData.enumerated() {
-            let x = CGFloat(index + candlesInfo.startIndex) * (candleWidth + candleSpacing)
+            let x = contextInfo.xCoordinate(for: index + candlesInfo.startIndex)
 
             // Calculate candle positions from the top
-            let candleTop = verticalPadding + CGFloat(yBounds.max - item.high) * yScale
-            let candleBottom = verticalPadding + CGFloat(yBounds.max - item.low) * yScale
-            let bodyTop = verticalPadding + CGFloat(yBounds.max - max(item.open, item.close)) * yScale
-            let bodyBottom = verticalPadding + CGFloat(yBounds.max - min(item.open, item.close)) * yScale
+            let candleTop = contextInfo.yCoordinate(for: item.high)
+            let candleBottom = contextInfo.yCoordinate(for: item.low)
+            let bodyTop = contextInfo.yCoordinate(for: max(item.open, item.close))
+            let bodyBottom = contextInfo.yCoordinate(for: min(item.open, item.close))
 
             // Create and draw the candle (wick)
             let candlePath = Path { path in
-                path.move(to: CGPoint(x: x + candleWidth / 2, y: candleTop))
-                path.addLine(to: CGPoint(x: x + candleWidth / 2, y: candleBottom))
+                path.move(to: CGPoint(x: x, y: candleTop))
+                path.addLine(to: CGPoint(x: x, y: candleBottom))
             }
             context.stroke(
                 candlePath,
@@ -64,7 +60,7 @@ public struct Candles: PrimaryContent {
             // Create and draw the body
             let bodyPath = Path { path in
                 path.addRect(
-                    CGRect(x: x, y: bodyTop, width: candleWidth, height: bodyBottom - bodyTop)
+                    CGRect(x: x - candleWidth / 2, y: bodyTop, width: candleWidth, height: bodyBottom - bodyTop)
                 )
             }
             context.fill(

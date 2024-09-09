@@ -10,7 +10,19 @@ public struct YAxis: PrimaryContent {
     public var negativeCandleColor: Color
     public var positiveCandleColor: Color
     public var lineColor: Color
+    public var labelsCount: Int
 
+    /// Initializes a new instance of `YAxis` with customizable appearance and behavior.
+    ///
+    /// - Parameters:
+    ///   - negativeCandleColor: The color used for negative (bearish) candles. Default is red.
+    ///   - positiveCandleColor: The color used for positive (bullish) candles. Default is green.
+    ///   - lineColor: The color of the horizontal grid lines. Default is gray.
+    ///   - labelFont: The font used for y-axis labels. Default is system font with size 10.
+    ///   - labelColor: The color of the y-axis label text. Default is black.
+    ///   - labelBackgroundColor: The background color of the y-axis labels. Default is white.
+    ///   - labelsCount: The number of labels (and grid lines) to display on the y-axis. Default is 4.
+    ///   - labelFormatter: A closure that formats the y-axis label values. Default formats to two decimal places.
     public init(
         negativeCandleColor: Color = Color.red,
         positiveCandleColor: Color = Color.green,
@@ -18,6 +30,7 @@ public struct YAxis: PrimaryContent {
         labelFont: Font = Font.system(size: 10),
         labelColor: Color = Color.black,
         labelBackgroundColor: Color = Color.white,
+        labelsCount: Int = 4,
         labelFormatter: @escaping (Double) -> String = { String(format: "%.2f", $0) }
     ) {
         self.labelFont = labelFont
@@ -26,6 +39,7 @@ public struct YAxis: PrimaryContent {
         self.positiveCandleColor = positiveCandleColor
         self.lineColor = lineColor
         self.labelBackgroundColor = labelBackgroundColor
+        self.labelsCount = labelsCount
         self.labelFormatter = labelFormatter
     }
 
@@ -49,13 +63,14 @@ public struct YAxis: PrimaryContent {
         candlesInfo: CandlesInfo,
         calculatedData: CalculatedData
     ) {
+        guard labelsCount > 2 else {
+            return
+        }
         let context = contextInfo.context
         let contextSize = contextInfo.contextSize
         let yBounds = contextInfo.yBounds
-        let verticalPadding = contextInfo.verticalPadding
-        let yScale = contextInfo.yScale
 
-        let yAxisLabels = stride(from: yBounds.min, through: yBounds.max, by: (yBounds.max - yBounds.min) / 3)
+        let yAxisLabels = stride(from: yBounds.min, through: yBounds.max, by: (yBounds.max - yBounds.min) / Double(labelsCount - 1))
 
         var labelX = contextInfo.visibleBounds.maxX
 
@@ -65,7 +80,7 @@ public struct YAxis: PrimaryContent {
 
         // Draw y-axis labels and lines
         for value in yAxisLabels {
-            let y = verticalPadding + CGFloat(yBounds.max - value) * yScale
+            let y = contextInfo.yCoordinate(for: value)
 
             // Draw horizontal line
             let linePath = Path { path in
@@ -86,7 +101,7 @@ public struct YAxis: PrimaryContent {
         if let last = candlesInfo.data.last {
             let color = last.open > last.close ? negativeCandleColor : positiveCandleColor
             let value = last.close
-            let y = verticalPadding + CGFloat(yBounds.max - value) * yScale
+            let y = contextInfo.yCoordinate(for: value)
 
             let linePath = Path { path in
                 path.move(to: CGPoint(x: 0, y: y))

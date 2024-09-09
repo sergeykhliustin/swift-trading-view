@@ -12,6 +12,17 @@ public struct XAxis: PrimaryContent {
     public var labelInterval: Int
     public var labelFormatter: (Double) -> String
 
+    /// Initializes a new instance of `XAxis` with customizable appearance and behavior.
+    ///
+    /// - Parameters:
+    ///   - lineColor: The color of the vertical grid lines. Default is gray.
+    ///   - labelFont: The font used for x-axis labels. Default is system font with size 10.
+    ///   - labelColor: The color of the x-axis label text. Default is black.
+    ///   - labelBackgroundColor: The background color of the x-axis labels. Default is white.
+    ///   - labelBackgroundPadding: The padding around the label text within its background. Default is 2 points.
+    ///   - labelBackgroundCornerRadius: The corner radius of the label background. Default is 2 points.
+    ///   - labelInterval: The interval at which to display labels on the x-axis. Default is every 10 candles.
+    ///   - labelFormatter: A closure that formats the x-axis label values. Default formats timestamps to "HH:mm" format.
     public init(
         lineColor: Color = Color.gray,
         labelFont: Font = Font.system(size: 10),
@@ -62,14 +73,11 @@ public struct XAxis: PrimaryContent {
 
         let context = contextInfo.context
         let contextSize = contextInfo.contextSize
-        let candleWidth = contextInfo.candleWidth
-        let candleSpacing = contextInfo.candleSpacing
 
         for (index, item) in candlesInfo.visibleData.enumerated() {
             if (index + candlesInfo.startIndex).isMultiple(of: labelInterval) {
-                let x =
-                    CGFloat(index + candlesInfo.startIndex) * (candleWidth + candleSpacing)
-                    + candleWidth / 2
+                let x = contextInfo.xCoordinate(for: index + candlesInfo.startIndex)
+
                 let linePath = Path { path in
                     path.move(to: CGPoint(x: x, y: 0))
                     path.addLine(to: CGPoint(x: x, y: contextSize.height))
