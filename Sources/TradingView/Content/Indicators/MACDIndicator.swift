@@ -4,48 +4,38 @@ import SwiftTA
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct MACDIndicator: Content {
-    public struct Parameters {
-        public var shortPeriod: Int
-        public var longPeriod: Int
-        public var maPeriod: Int
-        public var macdColor: Color
-        public var signalColor: Color
-        public var positiveColor: Color
-        public var negativeColor: Color
-
-        public init(
-            shortPeriod: Int = 12,
-            longPeriod: Int = 26,
-            maPeriod: Int = 9,
-            macdColor: Color = .blue,
-            signalColor: Color = .red,
-            positiveColor: Color = .green,
-            negativeColor: Color = .red
-        ) {
-            self.shortPeriod = shortPeriod
-            self.longPeriod = longPeriod
-            self.maPeriod = maPeriod
-            self.macdColor = macdColor
-            self.signalColor = signalColor
-            self.positiveColor = positiveColor
-            self.negativeColor = negativeColor
-        }
-    }
-
-    public var parameters: Parameters
+    public var shortPeriod: Int
+    public var longPeriod: Int
+    public var maPeriod: Int
+    public var macdColor: Color
+    public var signalColor: Color
+    public var positiveColor: Color
+    public var negativeColor: Color
     public var labelFont: Font
     public var lineWidth: CGFloat
     public var valueFormatter: (Double) -> String
     public var yAxisLabelColor: Color
 
     public init(
-        parameters: Parameters = Parameters(),
+        shortPeriod: Int = 12,
+        longPeriod: Int = 26,
+        maPeriod: Int = 9,
+        macdColor: Color = .blue,
+        signalColor: Color = .red,
+        positiveColor: Color = .green,
+        negativeColor: Color = .red,
         labelFont: Font = Font.system(size: 10),
         lineWidth: CGFloat = 1.0,
         valueFormatter: @escaping (Double) -> String = { String(format: "%.2f", $0) },
         yAxisLabelColor: Color = .black
     ) {
-        self.parameters = parameters
+        self.shortPeriod = shortPeriod
+        self.longPeriod = longPeriod
+        self.maPeriod = maPeriod
+        self.macdColor = macdColor
+        self.signalColor = signalColor
+        self.positiveColor = positiveColor
+        self.negativeColor = negativeColor
         self.labelFont = labelFont
         self.lineWidth = lineWidth
         self.valueFormatter = valueFormatter
@@ -57,9 +47,9 @@ public struct MACDIndicator: Content {
         do {
             let (beginIndex, macdLine, signalLine, histogram) = try TALib.MACD(
                 inReal: closes,
-                fastPeriod: parameters.shortPeriod,
-                slowPeriod: parameters.longPeriod,
-                signalPeriod: parameters.maPeriod
+                fastPeriod: shortPeriod,
+                slowPeriod: longPeriod,
+                signalPeriod: maPeriod
             )
 
             let visibleStartIndex = max(candlesInfo.startIndex - beginIndex, 0)
@@ -104,9 +94,9 @@ public struct MACDIndicator: Content {
         let histogramValue = histogram[lastVisibleIndex]
 
         return [
-            Text("DIF: \(valueFormatter(macdValue))").font(labelFont).foregroundColor(parameters.macdColor),
-            Text("DEA: \(valueFormatter(signalValue))").font(labelFont).foregroundColor(parameters.signalColor),
-            Text("MACD: \(valueFormatter(histogramValue))").font(labelFont).foregroundColor(histogramValue >= 0 ? parameters.positiveColor : parameters.negativeColor)
+            Text("DIF: \(valueFormatter(macdValue))").font(labelFont).foregroundColor(macdColor),
+            Text("DEA: \(valueFormatter(signalValue))").font(labelFont).foregroundColor(signalColor),
+            Text("MACD: \(valueFormatter(histogramValue))").font(labelFont).foregroundColor(histogramValue >= 0 ? positiveColor : negativeColor)
         ]
     }
 
@@ -135,8 +125,8 @@ public struct MACDIndicator: Content {
         }
 
         // Draw MACD and Signal lines
-        drawLine(context: context, contextInfo: contextInfo, beginIndex: beginIndex, values: macdLine, color: parameters.macdColor)
-        drawLine(context: context, contextInfo: contextInfo, beginIndex: beginIndex, values: signalLine, color: parameters.signalColor)
+        drawLine(context: context, contextInfo: contextInfo, beginIndex: beginIndex, values: macdLine, color: macdColor)
+        drawLine(context: context, contextInfo: contextInfo, beginIndex: beginIndex, values: signalLine, color: signalColor)
 
         // Draw histogram bars
         drawHistogram(context: context, contextInfo: contextInfo, beginIndex: beginIndex, values: histogram)
@@ -176,7 +166,7 @@ public struct MACDIndicator: Content {
                 height: abs(y - zeroY)
             )
 
-            let color = value >= 0 ? parameters.positiveColor : parameters.negativeColor
+            let color = value >= 0 ? positiveColor : negativeColor
 
             // Determine if the bar should be filled
             let shouldFill: Bool

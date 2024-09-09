@@ -12,7 +12,8 @@ struct ContentView: View {
             ],
             secondaryContent: [
                 RSIIndicator(),
-                MACDIndicator()
+                MACDIndicator(),
+                KDJIndicator()
             ]
         )
     }

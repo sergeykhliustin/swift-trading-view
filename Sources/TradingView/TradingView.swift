@@ -121,7 +121,7 @@ public struct TradingView: View {
                                 let legend = zipped.map({
                                     $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
                                 })
-                                flowLayout(
+                                drawLegend(
                                     context: context,
                                     bounds: CGRect(
                                         origin: CGPoint(
@@ -137,7 +137,7 @@ public struct TradingView: View {
                                     spacingX: legendSpacingX,
                                     spacingY: legendSpacingY
                                 )
-                                for (index, content) in secondaryContent.enumerated() {
+                                for (index, content) in secondaryContent.reversed().enumerated() {
                                     let calculatedData = content.calculate(candlesInfo: candlesInfo)
                                     let y = size.height - secondaryContentHeight
                                         * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
@@ -163,7 +163,7 @@ public struct TradingView: View {
                                         candlesInfo: candlesInfo,
                                         calculatedData: calculatedData
                                     )
-                                    flowLayout(
+                                    drawLegend(
                                         context: context,
                                         bounds: CGRect(
                                             origin: CGPoint(
@@ -273,7 +273,7 @@ public struct TradingView: View {
         )
     }
 
-    private func flowLayout(
+    private func drawLegend(
         context: GraphicsContext,
         bounds: CGRect,
         text: [Text],
@@ -281,7 +281,7 @@ public struct TradingView: View {
         spacingY: CGFloat
     ) {
         let resolvedTexts = text.map { context.resolve($0) }
-        var x: CGFloat = bounds.minX
+        var x: CGFloat = max(bounds.minX, 0)
         var y: CGFloat = bounds.minY
         for (_, resolvedText) in resolvedTexts.enumerated() {
             let textSize = resolvedText.measure(in: bounds.size)
@@ -313,8 +313,8 @@ struct TradingView_Preview: PreviewProvider {
                 BBIndicator(),
             ],
             secondaryContent: [
-                RSIIndicator(),
-                MACDIndicator()
+                MACDIndicator(),
+                KDJIndicator()
             ]
         )
     }

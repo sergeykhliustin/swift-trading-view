@@ -39,9 +39,6 @@ public enum MAType: UInt32 {
 
 /// A Swift wrapper for the TALib (Technical Analysis Library) functions.
 public struct TALib {
-
-    // MARK: - Moving Averages
-
     /// Calculates the Moving Average for a given set of data.
     ///
     /// - Parameters:
@@ -79,8 +76,6 @@ public struct TALib {
         // Only return the valid portion of the output
         return (Int(outBegIdx), Array(UnsafeBufferPointer(start: outReal, count: Int(outNBElement))))
     }
-
-    // MARK: - Volatility Indicators
 
     /// Calculates Bollinger Bands for a given set of data.
     ///
@@ -174,9 +169,9 @@ public struct TALib {
     /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
     public static func MACD(
         inReal: [Double],
-        fastPeriod: Int = 12,
-        slowPeriod: Int = 26,
-        signalPeriod: Int = 9
+        fastPeriod: Int,
+        slowPeriod: Int,
+        signalPeriod: Int
     ) throws -> (beginIndex: Int, macdLine: [Double], signalLine: [Double], histogram: [Double]) {
         guard inReal.count >= max(fastPeriod, slowPeriod, signalPeriod) else {
             throw TALibError.inputArrayTooSmall
@@ -216,6 +211,127 @@ public struct TALib {
         let histogram = Array(UnsafeBufferPointer(start: outMACDHist, count: Int(outNBElement)))
 
         return (Int(outBegIdx), macdLine, signalLine, histogram)
+    }
+
+    /// Calculates the KDJ (Stochastic Oscillator) indicator for a given set of data.
+    ///
+    /// - Parameters:
+    ///   - high: An array of Double values representing the high prices.
+    ///   - low: An array of Double values representing the low prices.
+    ///   - close: An array of Double values representing the closing prices.
+    ///   - fastKPeriod: The time period for the %K line. Default is 9.
+    ///   - slowKPeriod: The time period for the slow %K line. Default is 3.
+    ///   - slowDPeriod: The time period for the %D line. Default is 3.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - k: An array of Double values representing the %K line.
+    ///   - d: An array of Double values representing the %D line.
+    ///   - j: An array of Double values representing the %J line.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func KDJ(
+        high: [Double],
+        low: [Double],
+        close: [Double],
+        fastKPeriod: Int,
+        slowKPeriod: Int,
+        slowDPeriod: Int
+    ) throws -> (beginIndex: Int, k: [Double], d: [Double], j: [Double]) {
+        guard high.count == low.count, high.count == close.count, !high.isEmpty else {
+            throw TALibError.invalidParameter
+        }
+
+        let dataCount = high.count
+
+        // Calculate Stochastic Oscillator (%K and %D)
+        let (stochBeginIndex, fastK, slowK, slowD) = try STOCH(
+            high: high,
+            low: low,
+            close: close,
+            fastKPeriod: fastKPeriod,
+            slowKPeriod: slowKPeriod,
+            slowDPeriod: slowDPeriod
+        )
+
+        // Calculate %J
+        var j = [Double]()
+        for i in 0..<slowK.count {
+            let jValue = 3 * slowK[i] - 2 * slowD[i]
+            j.append(jValue)
+        }
+
+        return (stochBeginIndex, slowK, slowD, j)
+    }
+
+    /// Calculates the Stochastic Oscillator for a given set of data.
+    ///
+    /// - Parameters:
+    ///   - high: An array of Double values representing the high prices.
+    ///   - low: An array of Double values representing the low prices.
+    ///   - close: An array of Double values representing the closing prices.
+    ///   - fastKPeriod: The time period for the %K line. Default is 5.
+    ///   - slowKPeriod: The time period for the slow %K line. Default is 3.
+    ///   - slowDPeriod: The time period for the %D line. Default is 3.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - fastK: An array of Double values representing the fast %K line.
+    ///   - slowK: An array of Double values representing the slow %K line.
+    ///   - slowD: An array of Double values representing the %D line.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func STOCH(
+        high: [Double],
+        low: [Double],
+        close: [Double],
+        fastKPeriod: Int,
+        slowKPeriod: Int,
+        slowDPeriod: Int
+    ) throws -> (beginIndex: Int, fastK: [Double], slowK: [Double], slowD: [Double]) {
+        guard high.count == low.count, high.count == close.count, !high.isEmpty else {
+            throw TALibError.invalidParameter
+        }
+
+        let dataCount = high.count
+        let startIdx: Int32 = 0
+        let endIdx: Int32 = Int32(dataCount - 1)
+
+        var outBegIdx: Int32 = 0
+        var outNBElement: Int32 = 0
+
+        let outSlowK = UnsafeMutablePointer<Double>.allocate(capacity: dataCount)
+        let outSlowD = UnsafeMutablePointer<Double>.allocate(capacity: dataCount)
+        defer {
+            outSlowK.deallocate()
+            outSlowD.deallocate()
+        }
+
+        let retCode = high.withUnsafeBufferPointer { highPtr in
+            low.withUnsafeBufferPointer { lowPtr in
+                close.withUnsafeBufferPointer { closePtr in
+                    TA_STOCH(startIdx, endIdx,
+                             highPtr.baseAddress, lowPtr.baseAddress, closePtr.baseAddress,
+                             Int32(fastKPeriod), Int32(slowKPeriod), TA_MAType(0),
+                             Int32(slowDPeriod), TA_MAType(0),
+                             &outBegIdx, &outNBElement,
+                             outSlowK, outSlowD)
+                }
+            }
+        }
+
+        try checkReturnCode(retCode)
+
+        let slowK = Array(UnsafeBufferPointer(start: outSlowK, count: Int(outNBElement)))
+        let slowD = Array(UnsafeBufferPointer(start: outSlowD, count: Int(outNBElement)))
+
+        // Calculate fast %K
+        var fastK = [Double]()
+        for i in 0..<Int(outNBElement) {
+            let highestHigh = high[Int(outBegIdx)+i-fastKPeriod+1...Int(outBegIdx)+i].max() ?? 0
+            let lowestLow = low[Int(outBegIdx)+i-fastKPeriod+1...Int(outBegIdx)+i].min() ?? 0
+            let currentClose = close[Int(outBegIdx)+i]
+            let fastKValue = (currentClose - lowestLow) / (highestHigh - lowestLow) * 100
+            fastK.append(fastKValue)
+        }
+
+        return (Int(outBegIdx), fastK, slowK, slowD)
     }
 
     // MARK: - Helper Functions
