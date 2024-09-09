@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SwiftTradingView",
+    name: "swift-trading-view",
     platforms: [
         .iOS(.v12),
         .macOS(.v10_13),
