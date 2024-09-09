@@ -139,14 +139,15 @@ public struct TradingView: View {
                                 )
                                 for (index, content) in secondaryContent.enumerated() {
                                     let calculatedData = content.calculate(candlesInfo: candlesInfo)
+                                    let y = size.height - secondaryContentHeight
+                                        * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
                                     let contextInfo = ContextInfo(
                                         context: context,
                                         contextSize: size,
                                         visibleBounds: CGRect(
                                             origin: CGPoint(
                                                 x: scrollOffset,
-                                                y: size.height - secondaryContentHeight
-                                                    * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
+                                                y: y
                                             ),
                                             size: CGSize(
                                                 width: width,
@@ -167,8 +168,7 @@ public struct TradingView: View {
                                         bounds: CGRect(
                                             origin: CGPoint(
                                                 x: scrollOffset + legendPaddingLeading,
-                                                y: size.height - secondaryContentHeight
-                                                    * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
+                                                y: y
                                             ),
                                             size: CGSize(
                                                 width: width,
@@ -314,7 +314,7 @@ struct TradingView_Preview: PreviewProvider {
             ],
             secondaryContent: [
                 RSIIndicator(),
-                RSIIndicator()
+                MACDIndicator()
             ]
         )
     }

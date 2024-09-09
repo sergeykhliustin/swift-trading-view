@@ -159,6 +159,65 @@ public struct TALib {
         return (Int(outBegIdx), Array(UnsafeBufferPointer(start: outReal, count: Int(outNBElement))))
     }
 
+    /// Calculates the Moving Average Convergence/Divergence (MACD) for a given set of data.
+    ///
+    /// - Parameters:
+    ///   - inReal: An array of Double values representing the input data (typically closing prices).
+    ///   - fastPeriod: The number of periods for the fast EMA. Default is 12.
+    ///   - slowPeriod: The number of periods for the slow EMA. Default is 26.
+    ///   - signalPeriod: The number of periods for the signal line EMA. Default is 9.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - macdLine: An array of Double values representing the MACD line.
+    ///   - signalLine: An array of Double values representing the signal line.
+    ///   - histogram: An array of Double values representing the MACD histogram.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func MACD(
+        inReal: [Double],
+        fastPeriod: Int = 12,
+        slowPeriod: Int = 26,
+        signalPeriod: Int = 9
+    ) throws -> (beginIndex: Int, macdLine: [Double], signalLine: [Double], histogram: [Double]) {
+        guard inReal.count >= max(fastPeriod, slowPeriod, signalPeriod) else {
+            throw TALibError.inputArrayTooSmall
+        }
+
+        let startIdx: Int32 = 0
+        let endIdx: Int32 = Int32(inReal.count - 1)
+        let optInFastPeriod: Int32 = Int32(fastPeriod)
+        let optInSlowPeriod: Int32 = Int32(slowPeriod)
+        let optInSignalPeriod: Int32 = Int32(signalPeriod)
+
+        var outBegIdx: Int32 = 0
+        var outNBElement: Int32 = 0
+
+        // Allocate memory for the worst case scenario (same size as input)
+        let outMACD = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        let outMACDSignal = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        let outMACDHist = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        defer {
+            outMACD.deallocate()
+            outMACDSignal.deallocate()
+            outMACDHist.deallocate()
+        }
+
+        let retCode = inReal.withUnsafeBufferPointer { inRealPtr in
+            TA_MACD(startIdx, endIdx, inRealPtr.baseAddress,
+                    optInFastPeriod, optInSlowPeriod, optInSignalPeriod,
+                    &outBegIdx, &outNBElement,
+                    outMACD, outMACDSignal, outMACDHist)
+        }
+
+        try checkReturnCode(retCode)
+
+        // Only return the valid portion of the output
+        let macdLine = Array(UnsafeBufferPointer(start: outMACD, count: Int(outNBElement)))
+        let signalLine = Array(UnsafeBufferPointer(start: outMACDSignal, count: Int(outNBElement)))
+        let histogram = Array(UnsafeBufferPointer(start: outMACDHist, count: Int(outNBElement)))
+
+        return (Int(outBegIdx), macdLine, signalLine, histogram)
+    }
+
     // MARK: - Helper Functions
 
     /// Checks the return code from TALib functions and throws appropriate errors.
