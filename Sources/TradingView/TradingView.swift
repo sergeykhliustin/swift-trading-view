@@ -314,7 +314,8 @@ struct TradingView_Preview: PreviewProvider {
             ],
             secondaryContent: [
                 MACDIndicator(),
-                KDJIndicator()
+                KDJIndicator(),
+                WRIndicator()
             ]
         )
     }
