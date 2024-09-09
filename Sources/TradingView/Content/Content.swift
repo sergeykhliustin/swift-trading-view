@@ -7,7 +7,7 @@ import SwiftUI
 /// technical indicators on a financial chart. Types conforming to this protocol
 /// can be used as primary content in chart visualizations.
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-public protocol PrimaryContent {
+public protocol Content {
     /// Calculates the indicator values based on the provided candle data.
     ///
     /// This method should perform the necessary calculations to derive the

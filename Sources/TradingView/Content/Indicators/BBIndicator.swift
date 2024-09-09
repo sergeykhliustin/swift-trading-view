@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftTA
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-public struct BBIndicator: PrimaryContent {
+public struct BBIndicator: Content {
     public var calculatingPeriod: Int
     public var bandwidth: Double
     public var maType: MAType

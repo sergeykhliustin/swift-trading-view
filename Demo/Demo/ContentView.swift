@@ -7,8 +7,6 @@ struct ContentView: View {
         TradingView(
             data: data, 
             primaryContent: [
-                XAxis(),
-                YAxis(),
                 Candles(),
                 MAIndicator(),
             ]

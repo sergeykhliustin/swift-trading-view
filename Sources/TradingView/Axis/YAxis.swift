@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-public struct YAxis: PrimaryContent {
+public struct YAxis: Axis {
     public var labelFont: Font
     public var labelColor: Color
     public var labelBackgroundColor: Color
@@ -43,25 +43,9 @@ public struct YAxis: PrimaryContent {
         self.labelFormatter = labelFormatter
     }
 
-    public func calculate(candlesInfo: CandlesInfo) -> CalculatedData {
-        let (minLow, maxHigh) = candlesInfo.visibleData.reduce((Double.greatestFiniteMagnitude, Double.zero)) { result, item in
-            (min(result.0, item.low), max(result.1, item.high))
-        }
-        return CalculatedData(
-            min: minLow,
-            max: maxHigh,
-            values: ()
-        )
-    }
-
-    public func legend(candlesInfo: CandlesInfo, calculatedData: CalculatedData) -> [Text] {
-        return []
-    }
-
     public func draw(
         contextInfo: ContextInfo,
-        candlesInfo: CandlesInfo,
-        calculatedData: CalculatedData
+        candlesInfo: CandlesInfo
     ) {
         guard labelsCount > 2 else {
             return
