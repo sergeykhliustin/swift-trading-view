@@ -334,6 +334,60 @@ public struct TALib {
         return (Int(outBegIdx), fastK, slowK, slowD)
     }
 
+    /// Calculates the Williams %R (WR) indicator for a given set of data.
+    ///
+    /// - Parameters:
+    ///   - high: An array of Double values representing the high prices.
+    ///   - low: An array of Double values representing the low prices.
+    ///   - close: An array of Double values representing the closing prices.
+    ///   - timePeriod: The number of periods to use for the calculation. Default is 14.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - values: An array of Double values representing the calculated Williams %R.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func WR(
+        high: [Double],
+        low: [Double],
+        close: [Double],
+        timePeriod: Int = 14
+    ) throws -> (beginIndex: Int, values: [Double]) {
+        guard high.count == low.count, high.count == close.count, !high.isEmpty else {
+            throw TALibError.invalidParameter
+        }
+
+        guard high.count >= timePeriod else {
+            throw TALibError.inputArrayTooSmall
+        }
+
+        let dataCount = high.count
+        let startIdx: Int32 = 0
+        let endIdx: Int32 = Int32(dataCount - 1)
+        let optInTimePeriod: Int32 = Int32(timePeriod)
+
+        var outBegIdx: Int32 = 0
+        var outNBElement: Int32 = 0
+
+        let outReal = UnsafeMutablePointer<Double>.allocate(capacity: dataCount)
+        defer { outReal.deallocate() }
+
+        let retCode = high.withUnsafeBufferPointer { highPtr in
+            low.withUnsafeBufferPointer { lowPtr in
+                close.withUnsafeBufferPointer { closePtr in
+                    TA_WILLR(startIdx, endIdx,
+                             highPtr.baseAddress, lowPtr.baseAddress, closePtr.baseAddress,
+                             optInTimePeriod,
+                             &outBegIdx, &outNBElement, outReal)
+                }
+            }
+        }
+
+        try checkReturnCode(retCode)
+
+        let wrValues = Array(UnsafeBufferPointer(start: outReal, count: Int(outNBElement)))
+
+        return (Int(outBegIdx), wrValues)
+    }
+
     // MARK: - Helper Functions
 
     /// Checks the return code from TALib functions and throws appropriate errors.
