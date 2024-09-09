@@ -2,6 +2,31 @@ import Foundation
 import SwiftUI
 import SwiftTA
 
+extension MAType {
+    var name: String {
+        switch self {
+        case .sma:
+            return "MA"
+        case .ema:
+            return "EMA"
+        case .wma:
+            return "WMA"
+        case .dema:
+            return "DEMA"
+        case .tema:
+            return "TEMA"
+        case .trima:
+            return "TRIMA"
+        case .kama:
+            return "KAMA"
+        case .mama:
+            return "MAMA"
+        case .t3:
+            return "T3"
+        }
+    }
+}
+
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct MAIndicator: PrimaryContent {
     public struct Period {
@@ -27,7 +52,7 @@ public struct MAIndicator: PrimaryContent {
         ],
         labelFont: Font = Font.system(size: 10),
         lineWidth: CGFloat = 1.0,
-        maType: MAType = .ema,
+        maType: MAType = .sma,
         valueFormatter: @escaping (Double) -> String = { String(format: "%.2f", $0) }
     ) {
         self.periods = periods
@@ -37,11 +62,11 @@ public struct MAIndicator: PrimaryContent {
         self.valueFormatter = valueFormatter
     }
 
-    public func calculateYBounds(candlesInfo: CandlesInfo) -> (min: Double, max: Double) {
+    public func calculate(candlesInfo: CandlesInfo) -> CalculatedData {
         var allVisibleValues: [Double] = candlesInfo.visibleData.map { $0.close }
 
         let closes = candlesInfo.data.map { $0.close }
-
+        var values: [Int: [Double]] = [:]
         for period in periods {
             do {
                 let (beginIndex, maValues) = try TALib.MA(
@@ -55,17 +80,43 @@ public struct MAIndicator: PrimaryContent {
                     let visibleMAValues = maValues[max(candlesInfo.startIndex - beginIndex, 0)..<min(candlesInfo.endIndex - beginIndex, maValues.count)]
                     allVisibleValues.append(contentsOf: visibleMAValues)
                 }
+                values[period.value] = maValues
             } catch {
                 print("Error calculating MA for period \(period): \(error)")
             }
         }
+        return CalculatedData(
+            min: allVisibleValues.min() ?? 0,
+            max: allVisibleValues.max() ?? 0,
+            values: values
+        )
+    }
 
-        return (min: allVisibleValues.min() ?? 0, max: allVisibleValues.max() ?? 0)
+    public func legend(candlesInfo: CandlesInfo, calculatedData: CalculatedData) -> [Text] {
+        guard let values = calculatedData.values as? [Int: [Double]] else {
+            return []
+        }
+        var texts: [Text] = []
+        for period in periods {
+            guard let maValues = values[period.value] else { continue }
+            let beginIndex = candlesInfo.data.count - maValues.count
+
+            var lastVisibleMAValueIndex = min(maValues.count, candlesInfo.endIndex - beginIndex) - 1
+            if lastVisibleMAValueIndex < 0 {
+                lastVisibleMAValueIndex = 0
+            }
+            let text = Text("\(self.maType.name)(\(period.value)): \(valueFormatter(maValues[lastVisibleMAValueIndex]))")
+                .font(labelFont)
+                .foregroundColor(period.color)
+            texts.append(text)
+        }
+        return texts
     }
 
     public func draw(
         contextInfo: ContextInfo,
-        candlesInfo: CandlesInfo
+        candlesInfo: CandlesInfo,
+        calculatedData: CalculatedData
     ) {
         // Calculate the y-scale based on the visible range
         let yScale = contextInfo.yScale
@@ -75,54 +126,32 @@ public struct MAIndicator: PrimaryContent {
         let yBounds = contextInfo.yBounds
         let context = contextInfo.context
 
-        let closes = candlesInfo.data.map { $0.close }
-        var texts: [Text] = []
-
-        for period in periods {
-            do {
-                let (beginIndex, maValues) = try TALib.MA(
-                    inReal: closes,
-                    timePeriod: period.value,
-                    maType: self.maType
-                )
-
-                let maPath = Path { path in
-                    var firstPoint = true
-                    for (index, maValue) in maValues.enumerated() {
-                        let x = CGFloat(index + beginIndex) * (candleWidth + candleSpacing) + candleWidth / 2
-                        let y = verticalPadding + CGFloat(yBounds.max - maValue) * yScale
-
-                        if firstPoint {
-                            path.move(to: CGPoint(x: x, y: y))
-                            firstPoint = false
-                        } else {
-                            path.addLine(to: CGPoint(x: x, y: y))
-                        }
-                    }
-                }
-
-                context.stroke(maPath, with: .color(period.color), lineWidth: lineWidth)
-
-                var lastVisibleMAValueIndex = min(maValues.count, candlesInfo.endIndex - beginIndex) - 1
-                if lastVisibleMAValueIndex < 0 {
-                    lastVisibleMAValueIndex = 0
-                }
-                let text = Text("MA(\(period.value)): \(valueFormatter(maValues[lastVisibleMAValueIndex]))")
-                    .font(labelFont)
-                    .foregroundColor(period.color)
-                texts.append(text)
-            } catch {
-                print("Error calculating MA for period \(period): \(error)")
-            }
+        guard let values = calculatedData.values as? [Int: [Double]] else {
+            return
         }
 
-        flowLayout(
-            context: context,
-            bounds: contextInfo.visibleBounds,
-            text: texts,
-            spacingX: 5,
-            spacingY: 0
-        )
+        for period in periods {
+            guard let maValues = values[period.value] else {
+                continue
+            }
+            let beginIndex = candlesInfo.data.count - maValues.count
 
+            let maPath = Path { path in
+                var firstPoint = true
+                for (index, maValue) in maValues.enumerated() {
+                    let x = CGFloat(index + beginIndex) * (candleWidth + candleSpacing) + candleWidth / 2
+                    let y = verticalPadding + CGFloat(yBounds.max - maValue) * yScale
+
+                    if firstPoint {
+                        path.move(to: CGPoint(x: x, y: y))
+                        firstPoint = false
+                    } else {
+                        path.addLine(to: CGPoint(x: x, y: y))
+                    }
+                }
+            }
+
+            context.stroke(maPath, with: .color(period.color), lineWidth: lineWidth)
+        }
     }
 }
