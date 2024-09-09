@@ -144,201 +144,214 @@ public struct TradingView: View {
     }
     public var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        ZStack(alignment: .topLeading) {
-                            Canvas(rendersAsynchronously: true) { context, size in
-                                guard let candlesInfo = candlesInfo(for: geometry.size) else {
-                                    return
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    ZStack(alignment: .topLeading) {
+                        Canvas(rendersAsynchronously: true) { context, size in
+                            guard let candlesInfo = candlesInfo(for: geometry.size) else {
+                                return
+                            }
+                            let primaryContentBottomOffset =
+                                (secondaryContentHeight + secondaryContentSpacing)
+                                * CGFloat(secondaryContent.count) + contentPaddingBottom
+                            let calculatedData = primaryContent.map({
+                                $0.calculate(candlesInfo: candlesInfo)
+                            })
+                            let yBounds = calculatedData.reduce(
+                                (Double.greatestFiniteMagnitude, Double.zero)
+                            ) { result, item in
+                                (min(result.0, item.min), max(result.1, item.max))
+                            }
+                            let width = min(size.width - scrollOffset, geometry.size.width)
+                            let contextInfo = ContextInfo(
+                                context: context,
+                                contextSize: size,
+                                visibleBounds: CGRect(
+                                    origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
+                                    size: CGSize(
+                                        width: width,
+                                        height: size.height
+                                            - primaryContentBottomOffset - contentPaddingTop
+                                    )
+                                ),
+                                candleWidth: candleWidth,
+                                candleSpacing: candleSpacing,
+                                yBounds: yBounds
+                            )
+                            yAxis?
+                                .draw(
+                                    contextInfo: contextInfo,
+                                    candlesInfo: candlesInfo
+                                )
+                            xAxis?
+                                .draw(
+                                    contextInfo: contextInfo,
+                                    candlesInfo: candlesInfo
+                                )
+                            let zipped = zip(primaryContent, calculatedData)
+                            zipped
+                                .forEach {
+                                    $0.0.draw(
+                                        contextInfo: contextInfo,
+                                        candlesInfo: candlesInfo,
+                                        calculatedData: $0.1
+                                    )
                                 }
-                                let primaryContentBottomOffset =
-                                    (secondaryContentHeight + secondaryContentSpacing) * CGFloat(secondaryContent.count) + contentPaddingBottom
-                                let calculatedData = primaryContent.map({
-                                    $0.calculate(candlesInfo: candlesInfo)
-                                })
-                                let yBounds = calculatedData.reduce(
-                                    (Double.greatestFiniteMagnitude, Double.zero)
-                                ) { result, item in
-                                    (min(result.0, item.min), max(result.1, item.max))
-                                }
-                                let width = min(size.width - scrollOffset, geometry.size.width)
+                            let legend = zipped.map({
+                                $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
+                            })
+                            drawLegend(
+                                context: context,
+                                bounds: CGRect(
+                                    origin: CGPoint(
+                                        x: scrollOffset + legendPaddingLeading,
+                                        y: 0
+                                    ),
+                                    size: CGSize(
+                                        width: width,
+                                        height: geometry.size.height - primaryContentBottomOffset
+                                    )
+                                ),
+                                text: legend.flatMap { $0 },
+                                spacingX: legendSpacingX,
+                                spacingY: legendSpacingY
+                            )
+                            for (index, content) in secondaryContent.reversed().enumerated() {
+                                let calculatedData = content.calculate(candlesInfo: candlesInfo)
+                                let y =
+                                    size.height - secondaryContentHeight
+                                    * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index)
+                                    - contentPaddingBottom
                                 let contextInfo = ContextInfo(
                                     context: context,
                                     contextSize: size,
                                     visibleBounds: CGRect(
-                                        origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
+                                        origin: CGPoint(
+                                            x: scrollOffset,
+                                            y: y
+                                        ),
                                         size: CGSize(
                                             width: width,
-                                            height: size.height
-                                                - primaryContentBottomOffset - contentPaddingTop
+                                            height: secondaryContentHeight
                                         )
                                     ),
                                     candleWidth: candleWidth,
                                     candleSpacing: candleSpacing,
-                                    yBounds: yBounds
+                                    yBounds: (min: calculatedData.min, max: calculatedData.max)
                                 )
-                                yAxis?
-                                    .draw(
-                                        contextInfo: contextInfo,
-                                        candlesInfo: candlesInfo
-                                    )
-                                xAxis?
-                                    .draw(
-                                        contextInfo: contextInfo,
-                                        candlesInfo: candlesInfo
-                                    )
-                                let zipped = zip(primaryContent, calculatedData)
-                                zipped
-                                    .forEach {
-                                        $0.0.draw(
-                                            contextInfo: contextInfo,
-                                            candlesInfo: candlesInfo,
-                                            calculatedData: $0.1
-                                        )
-                                    }
-                                let legend = zipped.map({
-                                    $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
-                                })
+                                content.draw(
+                                    contextInfo: contextInfo,
+                                    candlesInfo: candlesInfo,
+                                    calculatedData: calculatedData
+                                )
                                 drawLegend(
                                     context: context,
                                     bounds: CGRect(
                                         origin: CGPoint(
                                             x: scrollOffset + legendPaddingLeading,
-                                            y: 0
+                                            y: y
                                         ),
                                         size: CGSize(
                                             width: width,
-                                            height: geometry.size.height - primaryContentBottomOffset
+                                            height: secondaryContentHeight
                                         )
                                     ),
-                                    text: legend.flatMap { $0 },
+                                    text: content.legend(
+                                        candlesInfo: candlesInfo,
+                                        calculatedData: calculatedData
+                                    ),
                                     spacingX: legendSpacingX,
                                     spacingY: legendSpacingY
                                 )
-                                for (index, content) in secondaryContent.reversed().enumerated() {
-                                    let calculatedData = content.calculate(candlesInfo: candlesInfo)
-                                    let y = size.height - secondaryContentHeight
-                                        * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index) - contentPaddingBottom
-                                    let contextInfo = ContextInfo(
-                                        context: context,
-                                        contextSize: size,
-                                        visibleBounds: CGRect(
-                                            origin: CGPoint(
-                                                x: scrollOffset,
-                                                y: y
-                                            ),
-                                            size: CGSize(
-                                                width: width,
-                                                height: secondaryContentHeight
-                                            )
-                                        ),
-                                        candleWidth: candleWidth,
-                                        candleSpacing: candleSpacing,
-                                        yBounds: (min: calculatedData.min, max: calculatedData.max)
-                                    )
-                                    content.draw(
-                                        contextInfo: contextInfo,
-                                        candlesInfo: candlesInfo,
-                                        calculatedData: calculatedData
-                                    )
-                                    drawLegend(
-                                        context: context,
-                                        bounds: CGRect(
-                                            origin: CGPoint(
-                                                x: scrollOffset + legendPaddingLeading,
-                                                y: y
-                                            ),
-                                            size: CGSize(
-                                                width: width,
-                                                height: secondaryContentHeight
-                                            )
-                                        ),
-                                        text: content.legend(candlesInfo: candlesInfo, calculatedData: calculatedData),
-                                        spacingX: legendSpacingX,
-                                        spacingY: legendSpacingY
-                                    )
-                                }
                             }
-                            .frame(
-                                width: CGFloat(data.count)
-                                    * (candleWidth + candleSpacing)
-                                    + scrollTrailingInset,
-                                height: primaryContentHeight != nil ? primaryContentHeight! + contentPaddingTop + contentPaddingBottom + (secondaryContentHeight + secondaryContentSpacing) * CGFloat(secondaryContent.count) : nil
+                        }
+                        .frame(
+                            width: CGFloat(data.count)
+                                * (candleWidth + candleSpacing)
+                                + scrollTrailingInset,
+                            height: primaryContentHeight != nil
+                                ? primaryContentHeight! + contentPaddingTop + contentPaddingBottom
+                                    + (secondaryContentHeight + secondaryContentSpacing)
+                                    * CGFloat(secondaryContent.count) : nil
+                        )
+
+                        GeometryReader { proxy in
+                            Color.clear.preference(
+                                key: ScrollOffsetPreferenceKey.self,
+                                value: proxy.frame(in: .named("scroll")).minX
                             )
-
-                            GeometryReader { proxy in
-                                Color.clear.preference(
-                                    key: ScrollOffsetPreferenceKey.self,
-                                    value: proxy.frame(in: .named("scroll")).minX
-                                )
-                            }
                         }
-                        .id("chartEnd")
                     }
-                    .coordinateSpace(name: "scroll")
-                    .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                        scrollOffset = -value
-
-                        // Calculate if we're at the end
-                        let contentWidth =
-                            CGFloat(data.count) * (candleWidth + candleSpacing)
-                            + scrollTrailingInset
-                        let viewportWidth = geometry.size.width
-                        isScrollAtEnd = abs(value) >= contentWidth - viewportWidth - 1  // 1 point tolerance
-                    }
-                    .onAppear {
-                        scrollViewProxy = proxy
-                    }
-                    #if !os(watchOS) && !os(tvOS)
-                        .gesture(
-                            MagnificationGesture()
-                                .onChanged { val in
-                                    let delta = val / self.lastScaleValue
-                                    self.lastScaleValue = val
-                                    let newScale = self.candleWidth * delta
-
-                                    if candleWidthRange.contains(newScale) {
-                                        self.candleWidth = newScale
-                                    }
-                                }
-                                .onEnded { _ in
-                                    // without this the next gesture will be broken
-                                    self.lastScaleValue = 1.0
-                                }
-                        )
-                    #elseif os(watchOS)
-                        .focusable()
-                        .digitalCrownRotation(
-                            $candleWidth,
-                            from: candleWidthRange.lowerBound,
-                            through: candleWidthRange.upperBound,
-                            by: (candleWidthRange.upperBound - candleWidthRange.lowerBound) / 20,
-                            sensitivity: .low
-                        )
-                    #endif
-                    #if os(visionOS)
-                        .onChange(of: data.count) { _, _ in
-                            if isScrollAtEnd {
-                                scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                            }
-                        }
-                        .onChange(of: candleWidth) { _, _ in
-                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                        }
-                    #else
-                        .onChange(of: data.count) { _ in
-                            if isScrollAtEnd {
-                                scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                            }
-                        }
-                        .onChange(of: candleWidth) { _ in
-                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                        }
-                    #endif
+                    .id("chartEnd")
                 }
+                .coordinateSpace(name: "scroll")
+                .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
+                    scrollOffset = -value
+
+                    // Calculate if we're at the end
+                    let contentWidth =
+                        CGFloat(data.count) * (candleWidth + candleSpacing)
+                        + scrollTrailingInset
+                    let viewportWidth = geometry.size.width
+                    isScrollAtEnd = abs(value) >= contentWidth - viewportWidth - 1  // 1 point tolerance
+                }
+                .onAppear {
+                    scrollViewProxy = proxy
+                }
+                #if !os(watchOS) && !os(tvOS)
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { val in
+                                let delta = val / self.lastScaleValue
+                                self.lastScaleValue = val
+                                let newScale = self.candleWidth * delta
+
+                                if candleWidthRange.contains(newScale) {
+                                    self.candleWidth = newScale
+                                }
+                            }
+                            .onEnded { _ in
+                                // without this the next gesture will be broken
+                                self.lastScaleValue = 1.0
+                            }
+                    )
+                #elseif os(watchOS)
+                    .focusable()
+                    .digitalCrownRotation(
+                        $candleWidth,
+                        from: candleWidthRange.lowerBound,
+                        through: candleWidthRange.upperBound,
+                        by: (candleWidthRange.upperBound - candleWidthRange.lowerBound) / 20,
+                        sensitivity: .low
+                    )
+                #endif
+                #if os(visionOS)
+                    .onChange(of: data.count) { _, _ in
+                        if isScrollAtEnd {
+                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                        }
+                    }
+                    .onChange(of: candleWidth) { _, _ in
+                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                    }
+                #else
+                    .onChange(of: data.count) { _ in
+                        if isScrollAtEnd {
+                            scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                        }
+                    }
+                    .onChange(of: candleWidth) { _ in
+                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
+                    }
+                #endif
             }
         }
+        .frame(
+            height: primaryContentHeight != nil
+                ? primaryContentHeight! + contentPaddingTop + contentPaddingBottom
+                    + (secondaryContentHeight + secondaryContentSpacing)
+                    * CGFloat(secondaryContent.count) : nil
+        )
     }
 
     private func candlesInfo(for visibleSize: CGSize) -> CandlesInfo? {
