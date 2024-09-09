@@ -3,25 +3,13 @@ import SwiftUI
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct Candles: PrimaryContent {
-    public var xAxisLabelFont: Font
-    public var xAxisLabelColor: Color
-    public var xAxisLabelInterval: Int
-    public var gridLineColor: Color
     public var negativeCandleColor: Color
     public var positiveCandleColor: Color
 
     public init(
-        xAxisLabelFont: Font = Font.system(size: 10),
-        xAxisLabelColor: Color = Color.black,
-        xAxisLabelInterval: Int = 10,
-        gridLineColor: Color = Color.gray,
         negativeCandleColor: Color = Color.red,
         positiveCandleColor: Color = Color.green
     ) {
-        self.xAxisLabelFont = xAxisLabelFont
-        self.xAxisLabelColor = xAxisLabelColor
-        self.xAxisLabelInterval = xAxisLabelInterval
-        self.gridLineColor = gridLineColor
         self.negativeCandleColor = negativeCandleColor
         self.positiveCandleColor = positiveCandleColor
     }
