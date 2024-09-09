@@ -4,7 +4,7 @@ import SwiftTA
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
     let data: [CandleData]
-    let primaryContent: [PrimaryContent]
+    let primaryContent: [any PrimaryContent]
     let candleWidthRange: ClosedRange<CGFloat>
     let candleSpacing: CGFloat
     let scrollTrailingInset: CGFloat
@@ -14,7 +14,7 @@ public struct TradingView: View {
         candleWidth: ClosedRange<CGFloat> = 2...20,
         candleSpacing: CGFloat = 2,
         scrollTrailingInset: CGFloat = 0,
-        primaryContent: [PrimaryContent]
+        primaryContent: [any PrimaryContent]
     ) {
         self.data = data
         self.primaryContent = primaryContent
@@ -43,13 +43,13 @@ public struct TradingView: View {
                                 guard let candlesInfo = candlesInfo(for: geometry.size) else {
                                     return
                                 }
-                                let yBounds = primaryContent.reduce(
+                                let calculatedData = primaryContent.map({
+                                    $0.calculate(candlesInfo: candlesInfo)
+                                })
+                                let yBounds = calculatedData.reduce(
                                     (Double.greatestFiniteMagnitude, Double.zero)
                                 ) { result, item in
-                                    let bounds = item.calculateYBounds(
-                                        candlesInfo: candlesInfo
-                                    )
-                                    return (min(result.0, bounds.min), max(result.1, bounds.max))
+                                    (min(result.0, item.min), max(result.1, item.max))
                                 }
                                 let contextInfo = ContextInfo(
                                     context: context,
@@ -63,12 +63,25 @@ public struct TradingView: View {
                                     verticalPadding: 20,
                                     yBounds: yBounds
                                 )
-                                primaryContent.forEach {
-                                    $0.draw(
-                                        contextInfo: contextInfo,
-                                        candlesInfo: candlesInfo
-                                    )
-                                }
+                                let zipped = zip(primaryContent, calculatedData)
+                                zipped
+                                    .forEach {
+                                        $0.0.draw(
+                                            contextInfo: contextInfo,
+                                            candlesInfo: candlesInfo,
+                                            calculatedData: $0.1
+                                        )
+                                    }
+                                let legend = zipped.map({
+                                    $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
+                                })
+                                flowLayout(
+                                    context: context,
+                                    bounds: contextInfo.visibleBounds,
+                                    text: legend.flatMap { $0 },
+                                    spacingX: 5,
+                                    spacingY: 2
+                                )
                             }
                             .frame(
                                 width: CGFloat(data.count)
@@ -160,6 +173,31 @@ public struct TradingView: View {
             startIndex: startIndex,
             endIndex: endIndex
         )
+    }
+
+    private func flowLayout(
+        context: GraphicsContext,
+        bounds: CGRect,
+        text: [Text],
+        spacingX: CGFloat,
+        spacingY: CGFloat
+    ) {
+        let resolvedTexts = text.map { context.resolve($0) }
+        var x: CGFloat = bounds.minX
+        var y: CGFloat = bounds.minY
+        for (_, resolvedText) in resolvedTexts.enumerated() {
+            let textSize = resolvedText.measure(in: bounds.size)
+            if x + textSize.width > bounds.maxX {
+                x = bounds.minX
+                y += textSize.height + spacingY
+            }
+            context.draw(
+                resolvedText,
+                at: CGPoint(x: x, y: y),
+                anchor: .topLeading
+            )
+            x += textSize.width + spacingX
+        }
     }
 }
 

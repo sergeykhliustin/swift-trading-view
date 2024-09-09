@@ -29,16 +29,25 @@ public struct YAxis: PrimaryContent {
         self.labelFormatter = labelFormatter
     }
 
-    public func calculateYBounds(candlesInfo: CandlesInfo) -> (min: Double, max: Double) {
+    public func calculate(candlesInfo: CandlesInfo) -> CalculatedData {
         let (minLow, maxHigh) = candlesInfo.visibleData.reduce((Double.greatestFiniteMagnitude, Double.zero)) { result, item in
             (min(result.0, item.low), max(result.1, item.high))
         }
-        return (min: minLow, max: maxHigh)
+        return CalculatedData(
+            min: minLow,
+            max: maxHigh,
+            values: ()
+        )
+    }
+
+    public func legend(candlesInfo: CandlesInfo, calculatedData: CalculatedData) -> [Text] {
+        return []
     }
 
     public func draw(
         contextInfo: ContextInfo,
-        candlesInfo: CandlesInfo
+        candlesInfo: CandlesInfo,
+        calculatedData: CalculatedData
     ) {
         let context = contextInfo.context
         let contextSize = contextInfo.contextSize
