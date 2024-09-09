@@ -29,7 +29,7 @@ public struct RSIIndicator: Content {
         labelFont: Font = Font.system(size: 10),
         lineWidth: CGFloat = 1.0,
         valueFormatter: @escaping (Double) -> String = { String(format: "%.2f", $0) },
-        yAxisLabelColor: Color = .gray
+        yAxisLabelColor: Color = .black
     ) {
         self.periods = periods
         self.labelFont = labelFont

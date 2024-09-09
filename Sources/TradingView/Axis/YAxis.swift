@@ -5,7 +5,6 @@ import SwiftUI
 public struct YAxis: Axis {
     public var labelFont: Font
     public var labelColor: Color
-    public var labelBackgroundColor: Color
     public var labelFormatter: (Double) -> String
     public var negativeCandleColor: Color
     public var positiveCandleColor: Color
@@ -20,7 +19,6 @@ public struct YAxis: Axis {
     ///   - lineColor: The color of the horizontal grid lines. Default is gray.
     ///   - labelFont: The font used for y-axis labels. Default is system font with size 10.
     ///   - labelColor: The color of the y-axis label text. Default is black.
-    ///   - labelBackgroundColor: The background color of the y-axis labels. Default is white.
     ///   - labelsCount: The number of labels (and grid lines) to display on the y-axis. Default is 4.
     ///   - labelFormatter: A closure that formats the y-axis label values. Default formats to two decimal places.
     public init(
@@ -29,7 +27,6 @@ public struct YAxis: Axis {
         lineColor: Color = Color.gray,
         labelFont: Font = Font.system(size: 10),
         labelColor: Color = Color.black,
-        labelBackgroundColor: Color = Color.white,
         labelsCount: Int = 4,
         labelFormatter: @escaping (Double) -> String = { String(format: "%.2f", $0) }
     ) {
@@ -38,7 +35,6 @@ public struct YAxis: Axis {
         self.negativeCandleColor = negativeCandleColor
         self.positiveCandleColor = positiveCandleColor
         self.lineColor = lineColor
-        self.labelBackgroundColor = labelBackgroundColor
         self.labelsCount = labelsCount
         self.labelFormatter = labelFormatter
     }
@@ -56,11 +52,7 @@ public struct YAxis: Axis {
 
         let yAxisLabels = stride(from: yBounds.min, through: yBounds.max, by: (yBounds.max - yBounds.min) / Double(labelsCount - 1))
 
-        var labelX = contextInfo.visibleBounds.maxX
-
-        if labelX > contextSize.width {
-            labelX = contextSize.width
-        }
+        let labelX = contextInfo.visibleBounds.maxX
 
         // Draw y-axis labels and lines
         for value in yAxisLabels {
@@ -76,8 +68,7 @@ public struct YAxis: Axis {
                 context: context,
                 contextSize: contextSize,
                 text: labelFormatter(value),
-                at: CGPoint(x: labelX, y: y),
-                backgroundColor: labelBackgroundColor
+                at: CGPoint(x: labelX, y: y)
             )
         }
 
@@ -87,22 +78,26 @@ public struct YAxis: Axis {
             let value = last.close
             let y = contextInfo.yCoordinate(for: value)
 
-            let linePath = Path { path in
-                path.move(to: CGPoint(x: 0, y: y))
-                path.addLine(to: CGPoint(x: contextSize.width, y: y))
+            if contextInfo.visibleBounds.contains(CGPoint(x: contextInfo.visibleBounds.midX, y: y)) {
+
+                let linePath = Path { path in
+                    path.move(to: CGPoint(x: contextInfo.visibleBounds.minX, y: y))
+                    path.addLine(to: CGPoint(x: contextInfo.visibleBounds.maxX, y: y))
+                }
+                context.stroke(
+                    linePath,
+                    with: .color(color),
+                    style: .init(lineWidth: 1, dash: [2, 2])
+                )
+                drawText(
+                    context: context,
+                    contextSize: contextSize,
+                    text: labelFormatter(value),
+                    at: CGPoint(x: labelX, y: y),
+                    color: color
+                )
+
             }
-            context.stroke(
-                linePath,
-                with: .color(color),
-                style: .init(lineWidth: 1, dash: [2, 2])
-            )
-            drawText(
-                context: context,
-                contextSize: contextSize,
-                text: labelFormatter(value),
-                at: CGPoint(x: labelX, y: y),
-                backgroundColor: color
-            )
         }
     }
 
@@ -111,28 +106,17 @@ public struct YAxis: Axis {
         contextSize: CGSize,
         text: String,
         at point: CGPoint,
-        backgroundColor: Color
+        color: Color? = nil
     ) {
         let text = Text(text)
             .font(labelFont)
-            .foregroundColor(labelColor)
+            .foregroundColor(color ?? labelColor)
         let resolvedText = context.resolve(text)
         let textSize = resolvedText.measure(in: contextSize)
-        // Calculate background rect with padding
-        let padding: CGFloat = 2
-        let backgroundRect = CGRect(
-            x: point.x - textSize.width - padding * 2,
-            y: point.y - textSize.height / 2 - padding,
-            width: textSize.width + padding * 2,
-            height: textSize.height + padding * 2
-        )
-        // Draw background
-        let backgroundPath = Path(roundedRect: backgroundRect, cornerRadius: 2)
-        context.fill(backgroundPath, with: .color(backgroundColor))
         // Draw text
         context.draw(
             text,
-            at: CGPoint(x: point.x - textSize.width - padding, y: point.y - textSize.height / 2),
+            at: CGPoint(x: point.x - textSize.width, y: point.y - textSize.height),
             anchor: .topLeading
         )
     }
