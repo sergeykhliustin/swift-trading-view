@@ -118,12 +118,6 @@ public struct MAIndicator: PrimaryContent {
         candlesInfo: CandlesInfo,
         calculatedData: CalculatedData
     ) {
-        // Calculate the y-scale based on the visible range
-        let yScale = contextInfo.yScale
-        let candleWidth = contextInfo.candleWidth
-        let candleSpacing = contextInfo.candleSpacing
-        let verticalPadding = contextInfo.verticalPadding
-        let yBounds = contextInfo.yBounds
         let context = contextInfo.context
 
         guard let values = calculatedData.values as? [Int: [Double]] else {
@@ -139,8 +133,8 @@ public struct MAIndicator: PrimaryContent {
             let maPath = Path { path in
                 var firstPoint = true
                 for (index, maValue) in maValues.enumerated() {
-                    let x = CGFloat(index + beginIndex) * (candleWidth + candleSpacing) + candleWidth / 2
-                    let y = verticalPadding + CGFloat(yBounds.max - maValue) * yScale
+                    let x = contextInfo.xCoordinate(for: index + beginIndex)
+                    let y = contextInfo.yCoordinate(for: maValue)
 
                     if firstPoint {
                         path.move(to: CGPoint(x: x, y: y))
