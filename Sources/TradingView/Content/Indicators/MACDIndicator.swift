@@ -55,6 +55,10 @@ public struct MACDIndicator: Content {
             let visibleStartIndex = max(candlesInfo.startIndex - beginIndex, 0)
             let visibleEndIndex = min(candlesInfo.endIndex - beginIndex, macdLine.count)
 
+            guard visibleStartIndex < visibleEndIndex else {
+                return CalculatedData(min: 0, max: 0, values: (beginIndex: 0, macdLine: [], signalLine: [], histogram: [], yAxisLabels: []))
+            }
+
             let visibleMacdLine = Array(macdLine[visibleStartIndex..<visibleEndIndex])
             let visibleSignalLine = Array(signalLine[visibleStartIndex..<visibleEndIndex])
             let visibleHistogram = Array(histogram[visibleStartIndex..<visibleEndIndex])
