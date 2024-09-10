@@ -67,7 +67,7 @@ public struct WRIndicator: Content {
             return []
         }
 
-        let lastVisibleIndex = min(wr.count - 1, candlesInfo.endIndex - beginIndex - 1)
+        let lastVisibleIndex = min(wr.count, candlesInfo.endIndex - beginIndex) - 1
         let wrValue = wr[lastVisibleIndex]
 
         return [

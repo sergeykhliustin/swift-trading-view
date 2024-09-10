@@ -1,5 +1,5 @@
 import SwiftUI
-import TradingView
+import SwiftTradingView
 
 struct ContentView: View {
     let data = CandleData.generateSampleData(count: 10000)
@@ -13,8 +13,8 @@ struct ContentView: View {
             ],
             secondaryContent: [
                 RSIIndicator(),
-//                MACDIndicator(),
-//                KDJIndicator()
+                MACDIndicator(),
+                KDJIndicator()
             ]
         )
     }
