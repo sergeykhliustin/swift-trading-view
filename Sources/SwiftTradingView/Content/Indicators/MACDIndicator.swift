@@ -211,7 +211,7 @@ public struct MACDIndicator: Content {
     }
 }
 
-extension Double {
+private extension Double {
     func rounded(toDecimalPlaces places: Int) -> Double {
         let multiplier = pow(10.0, Double(places))
         return (self * multiplier).rounded() / multiplier
