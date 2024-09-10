@@ -445,7 +445,8 @@ struct TradingView_Preview: PreviewProvider {
                 BBIndicator(),
             ],
             secondaryContent: [
-                MACDIndicator()
+                MACDIndicator(),
+                StochRSIIndicator()
             ]
         )
     }

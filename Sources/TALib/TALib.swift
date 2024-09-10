@@ -240,10 +240,8 @@ public struct TALib {
             throw TALibError.invalidParameter
         }
 
-        let dataCount = high.count
-
         // Calculate Stochastic Oscillator (%K and %D)
-        let (stochBeginIndex, fastK, slowK, slowD) = try STOCH(
+        let (stochBeginIndex, _, slowK, slowD) = try STOCH(
             high: high,
             low: low,
             close: close,
@@ -386,6 +384,61 @@ public struct TALib {
         let wrValues = Array(UnsafeBufferPointer(start: outReal, count: Int(outNBElement)))
 
         return (Int(outBegIdx), wrValues)
+    }
+    
+    /// Calculates the Stochastic RSI (StochRSI) indicator.
+    ///
+    /// - Parameters:
+    ///   - inReal: An array of Double values representing the input data (typically closing prices).
+    ///   - timePeriod: The number of periods for RSI calculation. Default is 14. (2 to 100000)
+    ///   - fastKPeriod: The number of periods for building the Fast-K line. Default is 3. (1 to 100000)
+    ///   - fastDPeriod: The number of periods for smoothing the Fast-D line. Default is 3. (1 to 100000)
+    ///   - fastDMAType: The type of Moving Average for Fast-D. Default is .sma.
+    /// - Returns: A tuple containing:
+    ///   - beginIndex: The index in the original array where the output begins.
+    ///   - fastK: An array of Double values representing the StochRSI %K line.
+    ///   - fastD: An array of Double values representing the StochRSI %D line.
+    /// - Throws: `TALibError` if the calculation fails or if input parameters are invalid.
+    public static func StochRSI(
+        inReal: [Double],
+        timePeriod: Int = 14,
+        fastKPeriod: Int = 3,
+        fastDPeriod: Int = 3,
+        fastDMAType: MAType = .sma
+    ) throws -> (beginIndex: Int, fastK: [Double], fastD: [Double]) {
+        guard inReal.count >= timePeriod else {
+            throw TALibError.inputArrayTooSmall
+        }
+
+        let startIdx: Int32 = 0
+        let endIdx: Int32 = Int32(inReal.count - 1)
+
+        var outBegIdx: Int32 = 0
+        var outNBElement: Int32 = 0
+
+        let outFastK = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        let outFastD = UnsafeMutablePointer<Double>.allocate(capacity: inReal.count)
+        defer {
+            outFastK.deallocate()
+            outFastD.deallocate()
+        }
+
+        let retCode = inReal.withUnsafeBufferPointer { inRealPtr in
+            TA_STOCHRSI(startIdx, endIdx, inRealPtr.baseAddress,
+                        Int32(timePeriod),
+                        Int32(fastKPeriod),
+                        Int32(fastDPeriod),
+                        TA_MAType(fastDMAType.rawValue),
+                        &outBegIdx, &outNBElement,
+                        outFastK, outFastD)
+        }
+
+        try checkReturnCode(retCode)
+
+        let fastK = Array(UnsafeBufferPointer(start: outFastK, count: Int(outNBElement)))
+        let fastD = Array(UnsafeBufferPointer(start: outFastD, count: Int(outNBElement)))
+
+        return (Int(outBegIdx), fastK, fastD)
     }
 
     // MARK: - Helper Functions
