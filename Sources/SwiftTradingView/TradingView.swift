@@ -446,7 +446,7 @@ struct TradingView_Preview: PreviewProvider {
             ],
             secondaryContent: [
                 MACDIndicator(),
-                StochRSIIndicator()
+                VolumeIndicator()
             ]
         )
     }
