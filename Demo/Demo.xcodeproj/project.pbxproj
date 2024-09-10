@@ -7,18 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1EDBA52C8B3F7D00794677 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1EDBA42C8B3F7D00794677 /* TradingView */; };
+		3F1674682C903834009286F6 /* SwiftTradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1674672C903834009286F6 /* SwiftTradingView */; };
+		3F16746A2C90383A009286F6 /* SwiftTradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F1674692C90383A009286F6 /* SwiftTradingView */; };
+		3F16746C2C903843009286F6 /* SwiftTradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F16746B2C903843009286F6 /* SwiftTradingView */; };
+		3F16746E2C90384A009286F6 /* SwiftTradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F16746D2C90384A009286F6 /* SwiftTradingView */; };
 		3F9CF79F2C8B633500C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3F9CF7A02C8B633700C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
 		3F9CF7B32C8B646B00C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3F9CF7B42C8B646D00C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
-		3F9CF7B62C8B648400C9ABA3 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9CF7B52C8B648400C9ABA3 /* TradingView */; };
-		3F9CF7CF2C8B943D00C9ABA3 /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9CF7CE2C8B943D00C9ABA3 /* TradingView */; };
 		3F9CF7D02C8B963500C9ABA3 /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3F9CF7D12C8B963800C9ABA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
 		3FD7F12E2C8A35F30057062E /* DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12D2C8A35F30057062E /* DemoApp.swift */; };
 		3FD7F1302C8A35F30057062E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD7F12F2C8A35F30057062E /* ContentView.swift */; };
-		3FD7F13D2C8A365E0057062E /* TradingView in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD7F13C2C8A365E0057062E /* TradingView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F1EDBA52C8B3F7D00794677 /* TradingView in Frameworks */,
+				3F16746A2C90383A009286F6 /* SwiftTradingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F9CF7B62C8B648400C9ABA3 /* TradingView in Frameworks */,
+				3F16746C2C903843009286F6 /* SwiftTradingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F9CF7CF2C8B943D00C9ABA3 /* TradingView in Frameworks */,
+				3F16746E2C90384A009286F6 /* SwiftTradingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FD7F13D2C8A365E0057062E /* TradingView in Frameworks */,
+				3F1674682C903834009286F6 /* SwiftTradingView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,7 +129,7 @@
 			);
 			name = "DemoWatchOS Watch App";
 			packageProductDependencies = (
-				3F1EDBA42C8B3F7D00794677 /* TradingView */,
+				3F1674692C90383A009286F6 /* SwiftTradingView */,
 			);
 			productName = "DemoWatchOS Watch App";
 			productReference = 3F1EDB922C8B3F4F00794677 /* DemoWatchOS Watch App.app */;
@@ -149,7 +149,7 @@
 			);
 			name = DemoTVOS;
 			packageProductDependencies = (
-				3F9CF7B52C8B648400C9ABA3 /* TradingView */,
+				3F16746B2C903843009286F6 /* SwiftTradingView */,
 			);
 			productName = DemoTVOS;
 			productReference = 3F9CF7A52C8B640800C9ABA3 /* DemoTVOS.app */;
@@ -169,7 +169,7 @@
 			);
 			name = DemoVisionOS;
 			packageProductDependencies = (
-				3F9CF7CE2C8B943D00C9ABA3 /* TradingView */,
+				3F16746D2C90384A009286F6 /* SwiftTradingView */,
 			);
 			productName = DemoVisionOS;
 			productReference = 3F9CF7BB2C8B7A3D00C9ABA3 /* DemoVisionOS.app */;
@@ -189,7 +189,7 @@
 			);
 			name = Demo;
 			packageProductDependencies = (
-				3FD7F13C2C8A365E0057062E /* TradingView */,
+				3F1674672C903834009286F6 /* SwiftTradingView */,
 			);
 			productName = Demo;
 			productReference = 3FD7F12A2C8A35F30057062E /* Demo.app */;
@@ -711,21 +711,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3F1EDBA42C8B3F7D00794677 /* TradingView */ = {
+		3F1674672C903834009286F6 /* SwiftTradingView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = TradingView;
+			productName = SwiftTradingView;
 		};
-		3F9CF7B52C8B648400C9ABA3 /* TradingView */ = {
+		3F1674692C90383A009286F6 /* SwiftTradingView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = TradingView;
+			productName = SwiftTradingView;
 		};
-		3F9CF7CE2C8B943D00C9ABA3 /* TradingView */ = {
+		3F16746B2C903843009286F6 /* SwiftTradingView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = TradingView;
+			productName = SwiftTradingView;
 		};
-		3FD7F13C2C8A365E0057062E /* TradingView */ = {
+		3F16746D2C90384A009286F6 /* SwiftTradingView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = TradingView;
+			productName = SwiftTradingView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

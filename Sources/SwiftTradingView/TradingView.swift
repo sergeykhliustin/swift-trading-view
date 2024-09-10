@@ -107,7 +107,7 @@ public struct TradingView: View {
         legendSpacingX: CGFloat = 5,
         legendSpacingY: CGFloat = 2,
         legendPaddingLeading: CGFloat = 10,
-        contentPaddingTop: CGFloat = 15,
+        contentPaddingTop: CGFloat = 0,
         contentPaddingBottom: CGFloat = 20,
         xAxis: Axis? = XAxis(),
         yAxis: Axis? = YAxis(),
@@ -151,6 +151,7 @@ public struct TradingView: View {
                             guard let candlesInfo = candlesInfo(for: geometry.size) else {
                                 return
                             }
+                            let width = min(size.width - scrollOffset, geometry.size.width)
                             let primaryContentBottomOffset =
                                 (secondaryContentHeight + secondaryContentSpacing)
                                 * CGFloat(secondaryContent.count) + contentPaddingBottom
@@ -162,16 +163,29 @@ public struct TradingView: View {
                             ) { result, item in
                                 (min(result.0, item.min), max(result.1, item.max))
                             }
-                            let width = min(size.width - scrollOffset, geometry.size.width)
+                            let zipped = zip(primaryContent, calculatedData)
+                            let legend = zipped.map({
+                                $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
+                            }).flatMap { $0 }
+                            let legendSize = legendSize(
+                                for: legend,
+                                context: context,
+                                bounds: CGRect(
+                                    origin: CGPoint(x: scrollOffset + legendPaddingLeading, y: contentPaddingTop),
+                                    size: CGSize(width: width, height: geometry.size.height - primaryContentBottomOffset)
+                                ),
+                                spacingX: legendSpacingX,
+                                spacingY: legendSpacingY
+                            )
                             let contextInfo = ContextInfo(
                                 context: context,
                                 contextSize: size,
                                 visibleBounds: CGRect(
-                                    origin: CGPoint(x: scrollOffset, y: contentPaddingTop),
+                                    origin: CGPoint(x: scrollOffset, y: contentPaddingTop + legendSize.height),
                                     size: CGSize(
                                         width: width,
                                         height: size.height
-                                            - primaryContentBottomOffset - contentPaddingTop
+                                            - primaryContentBottomOffset - contentPaddingTop - legendSize.height
                                     )
                                 ),
                                 candleWidth: candleWidth,
@@ -188,7 +202,6 @@ public struct TradingView: View {
                                     contextInfo: contextInfo,
                                     candlesInfo: candlesInfo
                                 )
-                            let zipped = zip(primaryContent, calculatedData)
                             zipped
                                 .forEach {
                                     $0.0.draw(
@@ -197,22 +210,20 @@ public struct TradingView: View {
                                         calculatedData: $0.1
                                     )
                                 }
-                            let legend = zipped.map({
-                                $0.0.legend(candlesInfo: candlesInfo, calculatedData: $0.1)
-                            })
+
                             drawLegend(
                                 context: context,
                                 bounds: CGRect(
                                     origin: CGPoint(
                                         x: scrollOffset + legendPaddingLeading,
-                                        y: 0
+                                        y: contentPaddingTop
                                     ),
                                     size: CGSize(
                                         width: width,
                                         height: geometry.size.height - primaryContentBottomOffset
                                     )
                                 ),
-                                text: legend.flatMap { $0 },
+                                text: legend,
                                 spacingX: legendSpacingX,
                                 spacingY: legendSpacingY
                             )
@@ -222,17 +233,31 @@ public struct TradingView: View {
                                     size.height - secondaryContentHeight
                                     * CGFloat(index + 1) - secondaryContentSpacing * CGFloat(index)
                                     - contentPaddingBottom
+                                let legend = content.legend(
+                                    candlesInfo: candlesInfo,
+                                    calculatedData: calculatedData
+                                )
+                                let legendSize = self.legendSize(
+                                    for: legend,
+                                    context: context,
+                                    bounds: CGRect(
+                                        origin: CGPoint(x: scrollOffset + legendPaddingLeading, y: y),
+                                        size: CGSize(width: width, height: secondaryContentHeight)
+                                    ),
+                                    spacingX: legendSpacingX,
+                                    spacingY: legendSpacingY
+                                )
                                 let contextInfo = ContextInfo(
                                     context: context,
                                     contextSize: size,
                                     visibleBounds: CGRect(
                                         origin: CGPoint(
                                             x: scrollOffset,
-                                            y: y
+                                            y: y + legendSize.height
                                         ),
                                         size: CGSize(
                                             width: width,
-                                            height: secondaryContentHeight
+                                            height: secondaryContentHeight - legendSize.height
                                         )
                                     ),
                                     candleWidth: candleWidth,
@@ -364,6 +389,19 @@ public struct TradingView: View {
             startIndex: startIndex,
             endIndex: endIndex
         )
+    }
+
+    private func legendSize(
+        for text: [Text],
+        context: GraphicsContext,
+        bounds: CGRect,
+        spacingX: CGFloat,
+        spacingY: CGFloat
+    ) -> CGSize {
+        let textSizes = text.map { context.resolve($0) }.map { $0.measure(in: bounds.size) }
+        let width = textSizes.reduce(0) { $0 + $1.width + spacingX }
+        let height = textSizes.reduce(0) { max($0, $1.height) } * ceil(width / bounds.width)
+        return CGSize(width: min(width, bounds.width), height: height)
     }
 
     private func drawLegend(
