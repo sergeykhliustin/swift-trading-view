@@ -26,15 +26,15 @@ let package = Package(
             name: "SwiftTradingView",
             dependencies: [
                 "SwiftTA"
-            ]
+            ],
+            path: "Sources/SwiftTradingView"
         ),
         .target(
             name: "SwiftTA",
             dependencies: [
                 "TALibFramework"
             ],
-            path: "Sources/TALib",
-            sources: ["TALib.swift"]
+            path: "Sources/SwiftTA"
         ),
         .binaryTarget(
             name: "TALibFramework",
