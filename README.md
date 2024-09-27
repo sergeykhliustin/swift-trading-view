@@ -70,7 +70,7 @@ The SwiftTA wrapper, which provides the core technical analysis calculations, su
 
 The TradingView component, which provides the interactive chart interface, supports:
 
-- iOS 15.0+
+- iOS 16.0+
 - macOS 12.0+
 - watchOS 8.0+
 - tvOS 15.0+

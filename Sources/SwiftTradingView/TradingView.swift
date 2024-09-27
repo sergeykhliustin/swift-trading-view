@@ -23,7 +23,7 @@ import SwiftTA
 ///     ]
 /// )
 /// ```
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 12.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
     // MARK: - Properties
 
@@ -142,6 +142,7 @@ public struct TradingView: View {
             scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
         }
     }
+    @State private var scrollDisabled = false
     public var body: some View {
         GeometryReader { geometry in
             ScrollViewReader { proxy in
@@ -310,6 +311,7 @@ public struct TradingView: View {
                     .id("chartEnd")
                 }
                 .coordinateSpace(name: "scroll")
+                .scrollDisabled(scrollDisabled)
                 .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                     scrollOffset = -value
 
@@ -327,17 +329,48 @@ public struct TradingView: View {
                     .gesture(
                         MagnificationGesture()
                             .onChanged { val in
+                                self.scrollDisabled = true
                                 let delta = val / self.lastScaleValue
                                 self.lastScaleValue = val
                                 let newScale = self.candleWidth * delta
 
                                 if candleWidthRange.contains(newScale) {
+                                    let oldContentWidth =
+                                    CGFloat(data.count) * (candleWidth + candleSpacing)
+                                    + scrollTrailingInset
+                                    let newContentWidth =
+                                    CGFloat(data.count) * (newScale + candleSpacing)
+                                    + scrollTrailingInset
+                                    let viewportWidth = geometry.size.width
+
+                                    // Calculate the center point of the visible content
+                                    let visibleCenter = scrollOffset + viewportWidth / 2
+
+                                    // Calculate the proportion of the content that is to the left of the center
+                                    let proportion = visibleCenter / oldContentWidth
+
+                                    // Calculate the new scroll offset to maintain the same center
+                                    let newScrollOffset = (newContentWidth * proportion) - (viewportWidth / 2)
+
+                                    // Update the candleWidth
                                     self.candleWidth = newScale
+
+                                    // Apply the new scroll offset
+                                    scrollViewProxy?.scrollTo(
+                                        "chartEnd",
+                                        anchor: UnitPoint(
+                                            x: newScrollOffset / (newContentWidth - viewportWidth),
+                                            y: 0
+                                        )
+                                    )
                                 }
                             }
                             .onEnded { _ in
                                 // without this the next gesture will be broken
                                 self.lastScaleValue = 1.0
+                                withAnimation(.default.delay(0.5)) {
+                                    self.scrollDisabled = false
+                                }
                             }
                     )
                 #elseif os(watchOS)
@@ -356,17 +389,11 @@ public struct TradingView: View {
                             scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
                         }
                     }
-                    .onChange(of: candleWidth) { _, _ in
-                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
-                    }
                 #else
                     .onChange(of: data.count) { _ in
                         if isScrollAtEnd {
                             scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
                         }
-                    }
-                    .onChange(of: candleWidth) { _ in
-                        scrollViewProxy?.scrollTo("chartEnd", anchor: .trailing)
                     }
                 #endif
             }
@@ -430,7 +457,7 @@ public struct TradingView: View {
     }
 }
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 12.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
 struct TradingView_Preview: PreviewProvider {
     @ViewBuilder
     static var previews: some View {
