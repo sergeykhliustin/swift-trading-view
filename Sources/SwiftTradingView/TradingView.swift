@@ -148,7 +148,7 @@ public struct TradingView: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     ZStack(alignment: .topLeading) {
-                        Canvas(rendersAsynchronously: true) { context, size in
+                        Canvas(rendersAsynchronously: false) { context, size in
                             guard let candlesInfo = candlesInfo(for: geometry.size) else {
                                 return
                             }
