@@ -23,7 +23,7 @@ import SwiftTA
 ///     ]
 /// )
 /// ```
-@available(macOS 12.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 13.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
 public struct TradingView: View {
     // MARK: - Properties
 
@@ -457,7 +457,7 @@ public struct TradingView: View {
     }
 }
 
-@available(macOS 12.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
+@available(macOS 13.0, iOS 16.0, watchOS 8.0, tvOS 15.0, *)
 struct TradingView_Preview: PreviewProvider {
     @ViewBuilder
     static var previews: some View {
